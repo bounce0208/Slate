@@ -456,7 +456,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
   <div class="fhdr">
     <div class="bk" onclick="gNav('tasks')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div>
     <h2 id="add-title">New task</h2>
-    <button class="svbtn" onclick="saveTask()">Save</button>
+    <button class="svbtn" style="font-size:12px;padding:7px 10px;background:var(--s2);border:1px solid var(--border2);color:var(--text2);margin-right:6px;" onclick="saveTask(true)">+ Another</button>
+    <button class="svbtn" onclick="saveTask(false)">Save</button>
   </div>
   <div class="fs">
     <div class="field" id="f-ctx-field" style="display:none;"><label>For</label><div class="sg" id="f-ctx-seg"></div></div>
@@ -633,6 +634,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
       <button class="mb wait" id="tm-wait-btn" onclick="tmStatus('waiting')">Mark as waiting</button>
       <button class="mb" id="tm-pending-btn" onclick="tmStatus('pending')">Mark as pending</button>
       <button class="mb ho-btn" id="tm-ho-btn" onclick="tmAddToHO()">Add to handover</button>
+      <button class="mb" onclick="tmAddJobForPatient()">Add job for this patient</button>
       <button class="mb" onclick="tmEdit()">Edit task</button>
       <button class="mb dng" onclick="tmDelete()">Delete task</button>
       <button class="mb mut" onclick="document.getElementById('task-modal').classList.remove('open')">Cancel</button>
@@ -1007,7 +1009,7 @@ function goAdd(){
   setTimeout(function(){document.getElementById('f-desc').focus();},250);
 }
 
-function saveTask(){
+function saveTask(andAnother){
   var desc=document.getElementById('f-desc').value.trim();
   if(!desc){toast('Add a description');document.getElementById('f-desc').focus();return;}
   if(!curCtxId&&S.contexts.length) curCtxId=S.contexts[0].id;
@@ -1030,7 +1032,34 @@ function saveTask(){
   };
   if(editId){ var idx=S.tasks.findIndex(function(t){return t.id===editId;}); if(idx!==-1)S.tasks[idx]=task; }
   else { S.tasks.unshift(task); }
-  sv(); toast(editId?'Task updated':'Task added'); gNav('tasks');
+  sv();
+  if(andAnother&&!editId){
+    // keep patient fields, reset job fields
+    var keepWard=task.ward, keepBed=task.bed==='\u2014'?'':task.bed;
+    var keepInit=task.initials, keepHosid=task.hosid, keepCtx=task.ctxId;
+    editId=null; curType=S.taskTypes[0]?S.taskTypes[0].toLowerCase():'chase'; curPrio='routine'; curStatus='pending';
+    document.getElementById('add-title').textContent='New task';
+    document.getElementById('f-desc').value='';
+    document.getElementById('f-notes').value='';
+    document.getElementById('f-escalation').value='';
+    document.getElementById('f-waiting-on').value='';
+    document.getElementById('f-waiting-field').style.display='none';
+    document.querySelectorAll('#f-prio-grp .so').forEach(function(o){o.className='so';});
+    document.querySelector('#f-prio-grp [data-v="routine"]').classList.add('on-routine');
+    document.querySelectorAll('#f-status-grp .so').forEach(function(o){o.className='so';});
+    document.querySelector('#f-status-grp [data-v="pending"]').classList.add('on-pending');
+    // restore patient fields
+    curCtxId=keepCtx; rCtxSeg(); bWardDrop();
+    document.getElementById('f-ward').value=keepWard;
+    document.getElementById('f-bed').value=keepBed;
+    document.getElementById('f-initials').value=keepInit;
+    document.getElementById('f-hosid').value=keepHosid;
+    bTypeGrid();
+    toast('Task added');
+    setTimeout(function(){document.getElementById('f-desc').focus();},100);
+  } else {
+    toast(editId?'Task updated':'Task added'); gNav('tasks');
+  }
 }
 
 // STATS FILTER
@@ -1300,6 +1329,30 @@ function tmEdit(){
   bTypeGrid();showScreen('screen-add');
 }
 function tmDelete(){if(!confirm('Delete this task?'))return;S.tasks=S.tasks.filter(function(t){return t.id!==mId;});sv();document.getElementById('task-modal').classList.remove('open');rList();toast('Task deleted');}
+function tmAddJobForPatient(){
+  var t=S.tasks.find(function(t){return t.id===mId;});if(!t)return;
+  document.getElementById('task-modal').classList.remove('open');
+  editId=null; curType=S.taskTypes[0]?S.taskTypes[0].toLowerCase():'chase'; curPrio='routine'; curStatus='pending';
+  curCtxId=t.ctxId;
+  document.getElementById('add-title').textContent='New task';
+  document.getElementById('f-desc').value='';
+  document.getElementById('f-notes').value='';
+  document.getElementById('f-escalation').value='';
+  document.getElementById('f-waiting-on').value='';
+  document.getElementById('f-waiting-field').style.display='none';
+  document.querySelectorAll('#f-prio-grp .so').forEach(function(o){o.className='so';});
+  document.querySelector('#f-prio-grp [data-v="routine"]').classList.add('on-routine');
+  document.querySelectorAll('#f-status-grp .so').forEach(function(o){o.className='so';});
+  document.querySelector('#f-status-grp [data-v="pending"]').classList.add('on-pending');
+  rCtxSeg(); bWardDrop();
+  document.getElementById('f-ward').value=t.ward;
+  document.getElementById('f-bed').value=t.bed==='\u2014'?'':t.bed;
+  document.getElementById('f-initials').value=t.initials||'';
+  document.getElementById('f-hosid').value=t.hosid||'';
+  bTypeGrid();
+  showScreen('screen-add');
+  setTimeout(function(){document.getElementById('f-desc').focus();},250);
+}
 function tmAddToHO(){
   var t=S.tasks.find(function(t){return t.id===mId;});if(!t)return;
   if(!S.hoEntries)S.hoEntries=[];
