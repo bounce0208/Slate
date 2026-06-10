@@ -49,7 +49,7 @@ A short setup wizard runs on first launch — name, wards, base ward, and on-cal
 
 ## Data
 
-Everything lives in your browser's localStorage. It never leaves your device.
+Everything lives in your local storage. It never leaves your device.
 
 Export a backup regularly: Settings → Export backup. Restore via Settings → Import backup. If you share the URL with colleagues, their data is completely separate — same URL, different device, different storage.
 
