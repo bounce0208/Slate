@@ -194,9 +194,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .ho-new-btn{width:100%;padding:12px;background:transparent;border:1px dashed var(--border2);border-radius:var(--r);color:var(--text3);font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:14px;}
 .ho-sum-btn{width:100%;padding:13px;background:linear-gradient(135deg,#3b82f6,#6366f1);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:14px;}
 .home-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;overflow-y:auto;}
+.home-logo{margin:0 auto 10px;flex-shrink:0;}
+.home-wordmark{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--text3);margin-bottom:0;}
 .home-icon{width:76px;height:76px;border-radius:19px;margin:0 auto 18px;overflow:hidden;flex-shrink:0;}
 .home-icon img{width:100%;height:100%;}
-.home-greeting{font-size:25px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.2;}
+.home-greeting{font-size:25px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.2;margin-top:18px;}
 .home-sub{font-size:14px;color:var(--text2);margin-bottom:26px;line-height:1.5;}
 .home-card{width:100%;display:flex;align-items:center;gap:14px;background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:16px;margin-bottom:10px;cursor:pointer;text-align:left;transition:all .15s;animation:cardIn .28s ease;}
 .home-card:active{background:var(--s2);transform:scale(.985);}
@@ -366,7 +368,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <!-- HOME -->
 <div class="screen active" id="screen-home">
   <div class="home-screen">
-    <div class="home-icon"><img src="icon-192.png" alt="Slate"></div>
+    <div class="home-logo">
+      <svg width="88" height="88" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="88" height="88" rx="20" fill="#0a0e1e"/>
+        <rect x="16" y="26" width="56" height="38" rx="7" fill="#1e2860" stroke="rgba(110,130,240,0.7)" stroke-width="1.2"/>
+        <rect x="22" y="32" width="44" height="17" rx="4" fill="#10163a"/>
+        <rect x="27" y="37" width="16" height="2.5" rx="1.25" fill="rgba(140,160,255,0.65)"/>
+        <rect x="27" y="43" width="28" height="3.5" rx="1.75" fill="rgba(200,215,255,0.88)"/>
+        <rect x="22" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.85)"/>
+        <rect x="38" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.5)"/>
+        <rect x="54" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.5)"/>
+        <circle cx="70" cy="25" r="6" fill="#ef4444"/>
+        <circle cx="68.5" cy="23" r="2" fill="rgba(255,180,180,0.55)"/>
+      </svg>
+      <div class="home-wordmark">Slate</div>
+    </div>
     <div class="home-greeting" id="home-greeting">Hello</div>
     <div class="home-sub" id="home-sub"></div>
     <div id="home-cards" style="width:100%;"></div>
@@ -378,7 +394,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <!-- SETUP 1: WELCOME -->
 <div class="screen" id="screen-setup-welcome">
   <div class="setup-scroll">
-    <div class="home-icon" style="margin:0 0 20px;"><img src="icon-192.png" alt="Slate"></div>
+    <div style="margin:0 0 20px;text-align:center;">
+      <svg width="64" height="64" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="88" height="88" rx="20" fill="#0a0e1e"/>
+        <rect x="16" y="26" width="56" height="38" rx="7" fill="#1e2860" stroke="rgba(110,130,240,0.7)" stroke-width="1.2"/>
+        <rect x="22" y="32" width="44" height="17" rx="4" fill="#10163a"/>
+        <rect x="27" y="37" width="16" height="2.5" rx="1.25" fill="rgba(140,160,255,0.65)"/>
+        <rect x="27" y="43" width="28" height="3.5" rx="1.75" fill="rgba(200,215,255,0.88)"/>
+        <rect x="22" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.85)"/>
+        <rect x="38" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.5)"/>
+        <rect x="54" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.5)"/>
+        <circle cx="70" cy="25" r="6" fill="#ef4444"/>
+      </svg>
+    </div>
     <div class="setup-progress"><div class="setup-dot on"></div><div class="setup-dot"></div><div class="setup-dot"></div><div class="setup-dot"></div></div>
     <div class="setup-step">Step 1 of 4</div>
     <div class="setup-title">Welcome to Slate</div>
