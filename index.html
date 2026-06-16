@@ -84,6 +84,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .pgroup.collapsed .pg-arrow{transform:rotate(-90deg);}
 .pgroup-body{padding:5px 7px 7px;}
 .pgroup.collapsed .pgroup-body{display:none;}
+.pg-edit{font-size:11px;color:var(--text3);background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:2px 6px;border-radius:6px;flex-shrink:0;}
+.pg-edit:active{background:var(--s2);}
+/* BULK EDIT SHEET */
+.bulk-sheet-fields{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.bulk-field-row{display:flex;align-items:center;gap:10px;}
+.bulk-field-label{font-size:12px;color:var(--text2);width:72px;flex-shrink:0;}
+.bulk-field-input{flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:9px 12px;}
 /* TASK CARDS */
 .twrap{position:relative;margin-bottom:5px;border-radius:var(--rs);overflow:hidden;animation:cardIn .22s ease;}
 .tswbg{position:absolute;inset:0;background:var(--low-dim);display:flex;align-items:center;padding-left:14px;}
@@ -775,6 +782,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
   </div>
 </div>
 
+<!-- BULK PATIENT EDIT SHEET -->
+<div class="mbg" id="bulk-modal" onclick="cBulk(event)">
+  <div class="conf-sheet">
+    <div class="mh"></div>
+    <h3 id="bulk-title">Move patient</h3>
+    <div class="msub" id="bulk-sub"></div>
+    <div class="bulk-sheet-fields">
+      <div class="bulk-field-row"><span class="bulk-field-label">Ward</span><input class="bulk-field-input" id="bulk-ward" type="text" placeholder="Ward"></div>
+      <div class="bulk-field-row"><span class="bulk-field-label">Bed</span><input class="bulk-field-input" id="bulk-bed" type="text" placeholder="Bed"></div>
+      <div class="bulk-field-row"><span class="bulk-field-label">Initials</span><input class="bulk-field-input" id="bulk-initials" type="text" placeholder="Initials" style="text-transform:uppercase;"></div>
+    </div>
+    <div class="mbs">
+      <button class="mb" onclick="doBulkEdit()">Update all</button>
+      <button class="mb mut" onclick="cBulk()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- HO SUMMARY MODAL -->
 <div class="mbg" id="ho-sum-bg" onclick="cHoSum(event)">
   <div class="ho-sum-mod">
@@ -1337,6 +1362,7 @@ function bWardBody(ctx,ward,list){
         +'<span class="pg-bed">Bed '+e(bed)+'</span>'
         +'<span class="pg-meta">'+e(meta)+'</span>'
         +'<span class="pg-ratio'+(dn===bt.length?' all-done':'')+'">'+dn+'/'+bt.length+'</span>'
+        +'<button class="pg-edit" onclick="event.stopPropagation();openBulkEdit('+JSON.stringify(bt.map(function(t){return t.id;}))+',\''+e(ward)+'\',\''+e(bed)+'\',\''+e(first.initials||'')+'\')">Move</button>'
         +'<span class="pg-arrow">\u25BC</span>'
         +'</div><div class="pgroup-body">';
       bt.forEach(function(t){html+=bTask(t,false,true);});
@@ -1371,7 +1397,7 @@ function bTask(t,showWard,inGroup){
   var escHTML=t.escalation?('<div class="tesc">\u2B06 '+e(t.escalation)+'</div>'):'';
   var notesHTML=t.notes?('<div class="tnotes">'+e(t.notes)+'</div>'):'';
   return '<div class="twrap" id="tw'+t.id+'">'
-    +'<div class="tswbg"><span class="tswic">\u2713</span></div>'
+    +'<div class="tswbg"></div>'
     +'<div class="'+tCls+'" id="ta'+t.id+'"'
     +' onclick="oTM('+t.id+')"'
     +' ontouchstart="swSt(event,'+t.id+')"'
@@ -1510,6 +1536,36 @@ function doConf(){
   confAction=null;
 }
 function cConf(ev){if(ev.target===document.getElementById('conf-modal'))document.getElementById('conf-modal').classList.remove('open');}
+
+var bulkIds=[];
+function openBulkEdit(ids,ward,bed,initials){
+  bulkIds=ids;
+  document.getElementById('bulk-title').textContent='Move patient';
+  document.getElementById('bulk-sub').textContent=ids.length+' job'+(ids.length!==1?'s':'');
+  document.getElementById('bulk-ward').value=ward==='__other'?'':ward;
+  document.getElementById('bulk-bed').value=bed;
+  document.getElementById('bulk-initials').value=initials;
+  document.getElementById('bulk-modal').classList.add('open');
+  setTimeout(function(){document.getElementById('bulk-ward').focus();},120);
+}
+function doBulkEdit(){
+  var ward=document.getElementById('bulk-ward').value.trim();
+  var bed=document.getElementById('bulk-bed').value.trim();
+  var initials=document.getElementById('bulk-initials').value.trim().toUpperCase();
+  bulkIds.forEach(function(id){
+    var t=S.tasks.find(function(t){return t.id===id;});
+    if(!t)return;
+    if(ward)t.ward=ward;
+    if(bed)t.bed=bed;
+    if(initials)t.initials=initials;
+  });
+  sv();rList();
+  document.getElementById('bulk-modal').classList.remove('open');
+  toast('Patient updated');
+}
+function cBulk(ev){
+  if(!ev||ev.target===document.getElementById('bulk-modal'))document.getElementById('bulk-modal').classList.remove('open');
+}
 // BLEEPS
 function updateBleepBadge(){
   var n=S.bleeps&&S.bleeps.length||0;
