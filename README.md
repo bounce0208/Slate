@@ -61,4 +61,4 @@ When a new version is available the app downloads it in the background. A small 
 
 ---
 
-*Built for NHS junior doctors. Not a medical device. Clinical decisions remain yours.*
+*Built for NHS resident doctors. Not a medical device. Clinical decisions remain yours.*
