@@ -693,7 +693,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <div class="ssec"><div class="sstitle">About</div>
       <div class="scard">
         <div class="srow"><div class="srl"><div>Slate</div><div class="srs">For the shift</div></div></div>
-        <div class="srow"><div class="srl"><div>Version</div><div class="srs">3.1</div></div></div>
+        <div class="srow"><div class="srl"><div>Version</div><div class="srs">3.2</div></div></div>
         <div class="srow"><div class="srl"><div>Data storage</div><div class="srs">Local only &mdash; never leaves your device</div></div></div>
         <div class="srow"><div class="srl"><div>Start over</div></div><span style="color:var(--text3);font-size:13px;cursor:pointer;" onclick="runSetup()">Run</span></div>
       </div>
@@ -2086,7 +2086,21 @@ doConf=function(){
 };
 
 // SERVICE WORKER
-if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').then(function(r){r.addEventListener('updatefound',function(){var nw=r.installing;nw.addEventListener('statechange',function(){if(nw.state==='installed'&&navigator.serviceWorker.controller)toast('Update ready \u2014 close and reopen');});});}).catch(function(){});}
+// SERVICE WORKER — robust auto-update
+if('serviceWorker' in navigator){
+  var _swReloaded=false,_swPending=false;
+  function _swSafe(){var a=document.activeElement;if(a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'))return false;if(document.querySelector('.mbg.open'))return false;var sa=document.getElementById('screen-add'),sh=document.getElementById('screen-hxover');if(sa&&sa.classList.contains('active'))return false;if(sh&&sh.classList.contains('active'))return false;return true;}
+  function _swApply(){if(_swReloaded)return;if(!_swSafe()){_swPending=true;toast('Update ready \u2014 applies shortly');return;}_swReloaded=true;location.reload();}
+  navigator.serviceWorker.addEventListener('controllerchange',_swApply);
+  navigator.serviceWorker.register('./sw.js').then(function(r){
+    r.update();
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){if(_swPending)_swApply();else r.update();}});
+    setInterval(function(){r.update();},30*60*1000);
+    function _watch(w){if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller)w.postMessage('skipWaiting');});}
+    if(r.waiting&&navigator.serviceWorker.controller)r.waiting.postMessage('skipWaiting');
+    r.addEventListener('updatefound',function(){_watch(r.installing);});
+  }).catch(function(){});
+}
 
 // TOAST
 var _tt,_undoFn=null;
