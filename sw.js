@@ -1,4 +1,4 @@
-var CACHE = 'slate-v3';
+var CACHE = 'slate-v4';
 var ASSETS = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 // Install: pre-cache the shell with fresh copies (bypassing the HTTP cache).

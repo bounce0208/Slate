@@ -1,7 +1,7 @@
 {
   "name": "Slate",
   "short_name": "Slate",
-  "description": "A job list for doctors",
+  "description": "A job list for the shift",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#080c18",

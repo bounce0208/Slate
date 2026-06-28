@@ -9,7 +9,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Slate</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#080c18;--s1:#0f1525;--s2:#161e30;--s3:#1d2640;--s4:#242e4a;
@@ -19,20 +20,32 @@
   --routine:#fbbf24;--routine-dim:rgba(251,191,36,0.12);--routine-line:rgba(251,191,36,0.25);
   --low:#34d399;--low-dim:rgba(52,211,153,0.1);--low-line:rgba(52,211,153,0.22);
   --wc:#818cf8;--wb:rgba(129,140,248,0.12);--wl:rgba(129,140,248,0.3);--acc:#5b62e8;
-  --r:10px;--rs:7px;
+  --r:11px;--rs:7px;--rsheet:18px;
+  /* task type colours */
+  --t-chase:#38bdf8;--t-review:#34d399;--t-prescribe:#f472b6;--t-procedure:#a78bfa;--t-imaging:#38bdf8;--t-other:#94a3b8;--t-tbao:#a78bfa;
+  --dot:#ef4444;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.4;}
+body{font-family:'Hanken Grotesk',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.4;}
+/* tabular figures everywhere numbers tick */
+.sn,.ttime,.bq-num,.bq-time,.end-stat-n,.ana-row-n,.tbed,.pg-bed,.pg-ratio,.setup-step{font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1;}
+/* serif wordmark */
+.serif-wm{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:.005em;}
+@keyframes dotBloom{0%{transform:scale(0);opacity:0;}60%{transform:scale(1.25);}100%{transform:scale(1);opacity:1;}}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.45;transform:scale(.82);}}
+@keyframes springIn{0%{transform:translateY(40px) scale(.97);opacity:.4;}55%{transform:translateY(-6px) scale(1.005);}100%{transform:translateY(0) scale(1);opacity:1;}}
+@keyframes fadeOut{from{opacity:1;}to{opacity:0;transform:translateX(40px);}}
+.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--dot);animation:livePulse 2.4s ease-in-out infinite;flex-shrink:0;}
 #app{height:100%;height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
 .screen{display:none;flex-direction:column;height:100%;overflow:hidden;}
 .screen.active{display:flex;animation:scrIn .2s ease;}
 @keyframes scrIn{from{opacity:.5;}to{opacity:1;}}
 @keyframes cardIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-@keyframes sheetUp{from{transform:translateY(36px);}to{transform:translateY(0);}}
+@keyframes sheetUp{0%{transform:translateY(40px);}62%{transform:translateY(-5px);}100%{transform:translateY(0);}}
 .hdr{background:var(--s1);border-bottom:1px solid var(--border);padding:12px 16px 10px;flex-shrink:0;}
 .hdr-top{display:flex;align-items:center;justify-content:space-between;}
-.wm{font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);letter-spacing:.12em;text-transform:uppercase;}
+.wm{font-family:'Martian Mono',monospace;font-size:12px;color:var(--text2);letter-spacing:.12em;text-transform:uppercase;}
 /* SHIFT TIME BARS */
 .shift-bars{flex-shrink:0;}
 .shift-bar-row{height:3px;overflow:hidden;}
@@ -45,7 +58,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .stat{flex:1;background:var(--s1);padding:9px 0 8px;text-align:center;cursor:pointer;transition:background .15s;}
 .stat:active{background:var(--s2);}
 .stat.on{background:var(--s3);}
-.sn{font-family:'DM Mono',monospace;font-size:17px;font-weight:500;color:var(--text);}
+.sn{font-family:'Martian Mono',monospace;font-size:17px;font-weight:500;color:var(--text);}
 .sn.amber{color:var(--routine);}
 .sn.blue{color:var(--wc);}
 .sn.green{color:var(--low);}
@@ -59,46 +72,51 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .ctx-sec{margin-bottom:22px;animation:cardIn .25s ease;}
 .ctx-hdr{margin-bottom:10px;}
 .ctx-hdr-top{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
-.ctx-name{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--text);letter-spacing:.08em;text-transform:uppercase;}
-.ctx-wards{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;}
+.ctx-name{font-family:'Martian Mono',monospace;font-size:12px;font-weight:500;color:var(--text);letter-spacing:.14em;text-transform:uppercase;}
+.ctx-wards{font-family:'Martian Mono',monospace;font-size:10px;color:var(--text3);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;}
 /* WARD GROUP */
 .wg{margin-bottom:14px;}
-.wg-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.wg-label{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:7px;}
 .wg-label::after{content:'';flex:1;height:1px;background:var(--border);}
 .wg-count{font-size:10px;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:1px 7px;color:var(--text3);}
 /* URGENT */
 .urgent-section{margin-bottom:14px;}
 .urgent-hdr{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
 .urgent-hdr::after{content:'';flex:1;height:1px;background:rgba(248,113,113,0.3);}
-.urgent-lbl{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--urgent);letter-spacing:.1em;text-transform:uppercase;}
+.urgent-lbl{font-family:'Martian Mono',monospace;font-size:11px;font-weight:600;color:var(--urgent);letter-spacing:.12em;text-transform:uppercase;}
 .urgent-ct{font-size:10px;background:var(--urgent);border:1px solid var(--urgent);border-radius:10px;padding:1px 8px;color:#1a0f12;font-weight:700;}
 /* PATIENT GROUP */
 .pgroup{background:rgba(255,255,255,0.015);border:1px solid var(--border);border-radius:var(--r);margin-bottom:7px;overflow:hidden;animation:cardIn .22s ease;}
 .pgroup-hdr{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;background:var(--s1);}
 .pgroup-hdr:active{background:var(--s2);}
-.pg-bed{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--text);}
-.pg-meta{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.pg-ratio{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
+.pg-bed{font-family:'Martian Mono',monospace;font-size:12px;font-weight:600;color:var(--text);}
+.pg-meta{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pg-ratio{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text3);}
 .pg-ratio.all-done{color:var(--low);}
 .pg-arrow{color:var(--text3);font-size:11px;transition:transform .2s;}
 .pgroup.collapsed .pg-arrow{transform:rotate(-90deg);}
 .pgroup-body{padding:5px 7px 7px;}
 .pgroup.collapsed .pgroup-body{display:none;}
-.pg-edit{font-size:11px;color:var(--text3);background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:2px 6px;border-radius:6px;flex-shrink:0;}
+.pg-edit{font-size:11px;color:var(--text3);background:transparent;border:none;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;padding:2px 6px;border-radius:6px;flex-shrink:0;}
 .pg-edit:active{background:var(--s2);}
 /* BULK EDIT SHEET */
 .bulk-sheet-fields{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
 .bulk-field-row{display:flex;align-items:center;gap:10px;}
 .bulk-field-label{font-size:12px;color:var(--text2);width:72px;flex-shrink:0;}
-.bulk-field-input{flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:9px 12px;}
+.bulk-field-input{flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'Hanken Grotesk',sans-serif;font-size:14px;padding:9px 12px;}
 /* TASK CARDS */
 .twrap{position:relative;margin-bottom:5px;border-radius:var(--rs);overflow:hidden;animation:cardIn .22s ease;}
 .tswbg{position:absolute;inset:0;background:var(--low-dim);display:flex;align-items:center;padding-left:14px;opacity:0;transition:opacity .15s;}
+.tswbg-wait{position:absolute;inset:0;background:var(--wb);display:flex;align-items:center;justify-content:flex-end;padding-right:14px;opacity:0;transition:opacity .15s;}
 .twrap.sw-hint .tswbg,.twrap.swiping .tswbg{opacity:1;}
+.twrap.swiping-l .tswbg-wait{opacity:1;}
+.tswic-wait{color:var(--wc);font-size:14px;font-weight:600;}
 .tswic{color:var(--low);font-size:14px;}
 .task{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:var(--rs);background:var(--s1);border:1px solid var(--border);cursor:pointer;transition:opacity .25s,transform .18s ease,background .15s;position:relative;overflow:hidden;will-change:transform;}
 .task::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
-.task.urgent::before{background:var(--urgent);width:4px;}
+.task.urgent::before{background:linear-gradient(to bottom,#ff9a9a,#c94040);width:4px;}
+.task.routine::before{background:linear-gradient(to bottom,#fde68a,#d97706);}
+.task.low::before{background:linear-gradient(to bottom,#7df0c0,#1f8a5b);}
 .task.urgent{background:var(--s1);border-color:var(--border);}
 .task.routine::before{background:var(--routine);}
 .task.low::before{background:var(--low);}
@@ -110,7 +128,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .done-roll-hdr:active{background:var(--s2);}
 .done-roll-ic{width:18px;height:18px;border-radius:50%;background:var(--low-dim);border:1px solid var(--low-line);color:var(--low);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .done-roll-lbl{font-size:13px;color:var(--text2);flex:1;}
-.done-roll-arrow{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
+.done-roll-arrow{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text3);}
 .done-roll-body{display:none;padding-top:5px;}
 .done-roll.open .done-roll-body{display:block;}
 .task.done .tname{text-decoration:line-through;color:var(--text2);}
@@ -121,11 +139,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .task.waiting .tchk{border-color:#818cf8;background:linear-gradient(to right,#818cf8 50%,transparent 50%);}
 .tbody{flex:1;min-width:0;}
 .tmeta{display:flex;align-items:center;gap:5px;margin-bottom:3px;flex-wrap:wrap;}
-.tbed{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);}
-.twrd{font-family:'DM Mono',monospace;font-size:11px;color:var(--text);font-weight:500;}
+.tbed{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text2);}
+.twrd{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text);font-weight:500;}
 .tbadge{font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;}
-.ttype{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;color:var(--text2);text-transform:uppercase;}
-.ttime{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-left:auto;}
+.ttype{font-family:'Martian Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.05em;color:var(--text2);text-transform:uppercase;}
+.ttype.tt-chase{color:var(--t-chase);}
+.ttype.tt-review{color:var(--t-review);}
+.ttype.tt-prescribing,.ttype.tt-prescribe{color:var(--t-prescribe);}
+.ttype.tt-procedure{color:var(--t-procedure);}
+.ttype.tt-imaging{color:var(--t-imaging);}
+.ttype.tt-tbao{color:var(--t-tbao);}
+.ttype.tt-other{color:var(--t-other);}
+.ttime{font-family:'Martian Mono',monospace;font-size:10px;color:var(--text3);margin-left:auto;}
 .tname{font-size:14px;color:var(--text);line-height:1.35;}
 .tnotes{font-size:12px;color:var(--text2);margin-top:2px;font-style:italic;}
 .twait{font-size:11px;color:var(--wc);margin-top:5px;display:inline-flex;align-items:center;gap:5px;background:var(--wb);border:1px solid var(--wl);border-radius:5px;padding:2px 8px;}
@@ -147,32 +172,36 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .empty-ic{font-size:28px;margin-bottom:12px;opacity:.7;}
 .empty p{font-size:14px;line-height:1.7;color:var(--text2);}
 /* FAB */
-.fab{position:fixed;bottom:76px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--acc);border:none;color:#fff;font-size:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.35);transition:transform .15s;}
-.fab:active{transform:scale(.9);}
+.fab{position:fixed;bottom:76px;right:20px;width:54px;height:54px;border-radius:50%;background:linear-gradient(145deg,#7b82f0,#4a50d4);border:none;color:#fff;font-size:26px;font-weight:300;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:200;box-shadow:0 0 0 1px rgba(165,180,252,.2),0 4px 20px rgba(91,98,232,.5),0 1px 0 rgba(255,255,255,.15) inset;transition:transform .15s cubic-bezier(.34,1.56,.64,1);}
+.fab:active{transform:scale(.88);}
 /* NAV */
-.bnav{display:flex;background:var(--s1);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;gap:3px;cursor:pointer;border:none;background:transparent;color:var(--text3);font-size:10px;letter-spacing:.05em;text-transform:uppercase;font-family:'DM Sans',sans-serif;position:relative;transition:color .15s;}
+.bnav{display:flex;background:var(--s1);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);position:relative;}
+.bnav::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.04;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%2280%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3CfeColorMatrix type=%22saturate%22 values=%220%22/%3E%3C/filter%3E%3Crect width=%22160%22 height=%2280%22 filter=%22url(%23n)%22/%3E%3C/svg%3E');background-size:160px 80px;}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;gap:4px;cursor:pointer;border:none;background:transparent;color:var(--text3);font-size:9px;letter-spacing:.04em;text-transform:uppercase;font-family:'Martian Mono',monospace;position:relative;transition:color .15s;}
 .nb.active{color:var(--acc);}
-.nb svg{width:20px;height:20px;}
-.nb-badge{position:absolute;top:6px;right:calc(50% - 16px);background:var(--urgent);color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;pointer-events:none;font-family:'DM Mono',monospace;}
+.nb svg{width:22px;height:22px;display:block;}
+.nb .ni-fill{display:none;}
+.nb.active .ni-fill{display:block;}
+.nb.active .ni-out{display:none;}
+.nb-badge{position:absolute;top:6px;right:calc(50% - 16px);background:var(--urgent);color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;pointer-events:none;font-family:'Martian Mono',monospace;}
 /* FORM SCREENS */
 .fhdr{display:flex;align-items:center;gap:12px;background:var(--s1);border-bottom:1px solid var(--border);padding:14px 16px;flex-shrink:0;}
 .bk{width:32px;height:32px;border-radius:8px;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:justify-center;cursor:pointer;color:var(--text2);flex-shrink:0;align-items:center;justify-content:center;}
 .fhdr h2{font-size:16px;font-weight:500;flex:1;}
-.svbtn{background:var(--acc);border:none;color:#fff;font-size:14px;font-weight:600;padding:8px 18px;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.svbtn{background:var(--acc);border:none;color:#fff;font-size:14px;font-weight:600;padding:8px 18px;border-radius:var(--rs);cursor:pointer;font-family:'Hanken Grotesk',sans-serif;}
 .svbtn:active{opacity:.8;}
-.anobtn{background:var(--s2);border:1px solid var(--border2);color:var(--text2);font-size:13px;font-weight:500;padding:8px 12px;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:6px;}
+.anobtn{background:var(--s2);border:1px solid var(--border2);color:var(--text2);font-size:13px;font-weight:500;padding:8px 12px;border-radius:var(--rs);cursor:pointer;font-family:'Hanken Grotesk',sans-serif;margin-right:6px;}
 .anobtn:active{background:var(--s3);}
 .fs{flex:1;overflow-y:auto;padding:16px;}
-.fsec-hdr{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin:20px 0 12px;padding-top:14px;border-top:1px solid var(--border);}
+.fsec-hdr{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin:20px 0 12px;padding-top:14px;border-top:1px solid var(--border);}
 .add-actions{flex-shrink:0;display:flex;gap:10px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--s1);border-top:1px solid var(--border);}
-.svbtn-b{flex:1;background:var(--acc);border:none;color:#fff;font-size:15px;font-weight:600;padding:14px 0;border-radius:9px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.svbtn-b{flex:1;background:var(--acc);border:none;color:#fff;font-size:15px;font-weight:600;padding:14px 0;border-radius:9px;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;}
 .svbtn-b:active{opacity:.85;}
-.anobtn-b{background:var(--s2);border:1px solid var(--border2);color:var(--text2);font-size:14px;font-weight:500;padding:14px 18px;border-radius:9px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.anobtn-b{background:var(--s2);border:1px solid var(--border2);color:var(--text2);font-size:14px;font-weight:500;padding:14px 18px;border-radius:9px;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;}
 .anobtn-b:active{background:var(--s3);}
 .field{margin-bottom:14px;}
 .field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;}
-.field input,.field select,.field textarea{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s;}
+.field input,.field select,.field textarea{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:15px;font-family:'Hanken Grotesk',sans-serif;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s;}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(99,102,241,.4);}
 .field textarea{height:72px;resize:none;line-height:1.5;}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
@@ -196,17 +225,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .bq-row{display:flex;gap:10px;align-items:flex-end;}
 .bqf{flex:1;}
 .bqf label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;}
-.bqf input{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none;}
+.bqf input{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:15px;font-family:'Hanken Grotesk',sans-serif;outline:none;-webkit-appearance:none;}
 .bqf input:focus{border-color:rgba(99,102,241,.4);}
 .bqadd{width:48px;height:48px;border-radius:var(--rs);background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);color:#a5b4fc;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
 .bq-hint{font-size:11px;color:var(--text3);margin-top:8px;}
 .bq-item{display:flex;align-items:flex-start;gap:12px;background:var(--s1);border:1px solid var(--border);border-left:3px solid var(--wc);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;animation:cardIn .22s ease;}
-.bq-num{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--wc);min-width:64px;flex-shrink:0;}
+.bq-num{font-family:'Martian Mono',monospace;font-size:22px;font-weight:500;color:var(--wc);min-width:64px;flex-shrink:0;}
 .bq-info{flex:1;}
 .bq-notes-txt{font-size:13px;color:var(--text);margin-bottom:3px;}
-.bq-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
+.bq-time{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text3);}
 .bq-btns{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
-.bq-btn{padding:5px 11px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:1px solid;}
+.bq-btn{padding:5px 11px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;border:1px solid;}
 .bq-btn.log{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.3);color:#a5b4fc;}
 .bq-btn.clr{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.25);color:var(--urgent);}
 .bq-empty{text-align:center;padding:50px 20px;color:var(--text3);font-size:13px;}
@@ -216,12 +245,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .ho-ehdr{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;}
 .ho-ehdr:active{background:var(--s2);}
 .ho-ename{font-size:14px;font-weight:500;flex:1;}
-.ho-eloc{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);}
+.ho-eloc{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text2);}
 .ho-edel{color:var(--text3);font-size:18px;cursor:pointer;padding:0 4px;}
 .ho-ebody{padding:12px 14px;border-top:1px solid var(--border);}
 .hof{margin-bottom:12px;}
 .hof label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;}
-.hof input,.hof textarea{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:9px 12px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;}
+.hof input,.hof textarea{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:9px 12px;color:var(--text);font-size:14px;font-family:'Hanken Grotesk',sans-serif;outline:none;}
 .hof input:focus,.hof textarea:focus{border-color:rgba(99,102,241,.4);}
 .hof textarea{height:80px;resize:none;line-height:1.5;}
 .ho-opts{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;}
@@ -236,14 +265,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .ho-job-txt{flex:1;font-size:13px;color:var(--text2);}
 .ho-job-del{color:var(--text3);font-size:16px;cursor:pointer;padding:0 4px;}
 .ho-add-job-row{display:flex;gap:8px;margin-top:6px;}
-.ho-add-job-inp{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;}
-.ho-add-job-btn{background:var(--s3);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 12px;color:var(--text2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-.ho-new-btn{width:100%;padding:12px;background:transparent;border:1px dashed var(--border2);border-radius:var(--r);color:var(--text3);font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:14px;}
-.ho-sum-btn{width:100%;padding:13px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:14px;}
+.ho-add-job-inp{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:13px;font-family:'Hanken Grotesk',sans-serif;outline:none;}
+.ho-add-job-btn{background:var(--s3);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 12px;color:var(--text2);font-size:13px;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;}
+.ho-new-btn{width:100%;padding:12px;background:transparent;border:1px dashed var(--border2);border-radius:var(--r);color:var(--text3);font-size:14px;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;margin-bottom:14px;}
+.ho-sum-btn{width:100%;padding:13px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;margin-bottom:14px;}
 /* HOME */
 .home-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;overflow-y:auto;}
 .home-logo{margin:0 auto 10px;flex-shrink:0;}
-.home-wordmark{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--text3);margin-bottom:0;}
+.home-wordmark{font-family:'Hanken Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--text3);margin-bottom:0;}
 .home-greeting{font-size:25px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.2;margin-top:18px;}
 .home-sub{font-size:14px;color:var(--text2);margin-bottom:26px;line-height:1.5;}
 .home-card{width:100%;display:flex;align-items:center;gap:14px;background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:16px 18px;margin-bottom:10px;cursor:pointer;text-align:left;transition:all .15s;animation:cardIn .28s ease;}
@@ -252,9 +281,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .hc-name{font-size:15px;font-weight:600;color:var(--text);}
 .hc-sub{font-size:12px;color:var(--text2);margin-top:2px;}
 .hc-arr{color:var(--text3);font-size:16px;flex-shrink:0;}
-.home-settings-btn{font-size:13px;color:var(--text3);background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:10px;}
+.home-settings-btn{font-size:13px;color:var(--text3);background:transparent;border:none;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;padding:10px;}
 .home-history{width:100%;margin-top:20px;text-align:left;}
-.home-history-title{font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:'DM Mono',monospace;}
+.home-history-title{font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:'Martian Mono',monospace;}
 .home-history-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 13px;margin-bottom:6px;}
 .home-history-name{font-size:13px;font-weight:500;color:var(--text);}
 .home-history-sub{font-size:11px;color:var(--text2);margin-top:2px;}
@@ -263,11 +292,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .actx{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);padding:14px;margin-bottom:12px;animation:cardIn .25s ease;}
 .actx-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
 .actx-name{font-size:15px;font-weight:600;}
-.actx-wards{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);margin-bottom:10px;}
+.actx-wards{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text2);margin-bottom:10px;}
 .actx-stats{display:flex;gap:14px;margin-bottom:10px;}
-.actx-stat{font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);}
+.actx-stat{font-family:'Martian Mono',monospace;font-size:12px;color:var(--text2);}
 .actx-stat b{color:var(--text);font-weight:500;}
-.end-ctx-btn{width:100%;padding:11px;background:transparent;border:1px solid var(--urgent-line);border-radius:var(--rs);color:var(--urgent);font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;}
+.end-ctx-btn{width:100%;padding:11px;background:transparent;border:1px solid var(--urgent-line);border-radius:var(--rs);color:var(--urgent);font-size:14px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;}
 .kind-pills{display:flex;gap:8px;margin-bottom:14px;}
 .kp{flex:1;padding:10px 4px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--s2);color:var(--text2);font-size:13px;font-weight:500;text-align:center;cursor:pointer;transition:all .15s;}
 .kp.on{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.35);color:#a5b4fc;}
@@ -276,26 +305,30 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .shift-type-name{font-size:15px;font-weight:500;margin-bottom:2px;}
 .shift-type-time{font-size:12px;color:var(--text2);}
 .shift-ward-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px;}
-.ward-chip{font-family:'DM Mono',monospace;font-size:11px;padding:7px 4px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--s2);color:var(--text3);cursor:pointer;text-align:center;transition:all .15s;}
+.ward-chip{font-family:'Martian Mono',monospace;font-size:11px;padding:7px 4px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--s2);color:var(--text3);cursor:pointer;text-align:center;transition:all .15s;}
 .ward-chip.on{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.35);color:#a5b4fc;}
-.start-shift-btn{width:100%;padding:14px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:16px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:10px;}
-.recv-btn{width:100%;padding:13px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:16px;}
+.start-shift-btn{width:100%;padding:14px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:16px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;margin-bottom:10px;}
+.recv-btn{width:100%;padding:13px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:15px;font-weight:500;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;margin-bottom:16px;}
 .history-title{font-size:12px;color:var(--text2);font-weight:500;letter-spacing:.06em;text-transform:uppercase;margin:8px 0 10px;}
 .history-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;margin-bottom:8px;}
 .history-name{font-size:14px;font-weight:500;margin-bottom:2px;}
 .history-sub{font-size:12px;color:var(--text2);}
 /* ANALYTICS */
-.ana-btn{width:100%;padding:12px;background:transparent;border:1px dashed var(--border2);border-radius:var(--r);color:var(--text2);font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;margin:6px 0 14px;}
+.ana-btn{width:100%;padding:12px;background:transparent;border:1px dashed var(--border2);border-radius:var(--r);color:var(--text2);font-size:14px;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;margin:6px 0 14px;}
 .ana-head{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;margin-bottom:8px;}
 .ana-head-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
-.ana-head-sub{font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);}
+.ana-head-sub{font-family:'Martian Mono',monospace;font-size:12px;color:var(--text2);}
 .ana-row{background:var(--s1);border:1px solid var(--border);border-radius:var(--rs);padding:10px 13px;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
 .ana-row-info{flex:1;min-width:0;}
 .ana-row-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ana-row-sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);margin-top:2px;}
-.ana-row-n{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--routine);flex-shrink:0;}
+.ana-row-sub{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text2);margin-top:2px;}
+.ana-row-n{font-family:'Martian Mono',monospace;font-size:16px;font-weight:500;color:var(--routine);flex-shrink:0;}
 /* SETTINGS */
 .settings-scroll{flex:1;overflow-y:auto;padding:16px;}
+.sgroup{font-family:'Martian Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#4a5568;padding:8px 2px 12px;display:flex;align-items:center;gap:10px;margin-top:6px;}
+.sgroup::after{content:'';flex:1;height:1px;background:var(--border);}
+.sgroup:first-child{margin-top:0;}
+.sdanger-lbl{font-family:'Martian Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#6b4545;margin:2px 2px 8px;}
 .ssec{margin-bottom:24px;}
 .sstitle{font-size:12px;color:var(--text2);font-weight:500;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;}
 .scard{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:8px;}
@@ -305,19 +338,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .srs{font-size:12px;color:var(--text2);margin-top:2px;}
 .sdel{color:var(--text3);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;}
 .sdel:active{color:var(--urgent);}
-.dbtn{width:100%;padding:13px 16px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.dbtn{width:100%;padding:13px 16px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-size:15px;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;text-align:left;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
 .dbtn:active{background:var(--s3);}
 .dbtn.dng{color:var(--urgent);border-color:var(--urgent-line);background:var(--urgent-dim);}
 .shift-edit-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
 .shift-edit-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.shift-edit-name{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;outline:none;margin-right:10px;}
+.shift-edit-name{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:15px;font-family:'Hanken Grotesk',sans-serif;font-weight:500;outline:none;margin-right:10px;}
 .shift-edit-sec{font-size:11px;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin:10px 0 6px;}
 .shift-time-row{display:flex;gap:10px;margin-bottom:8px;}
-.shift-time-row input{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:14px;font-family:'DM Mono',monospace;outline:none;}
+.shift-time-row input{flex:1;background:var(--s1);border:1px solid var(--border);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:14px;font-family:'Martian Mono',monospace;outline:none;}
 .shift-edit-wards{display:flex;flex-wrap:wrap;gap:6px;}
-.shift-edit-ward{font-family:'DM Mono',monospace;font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid var(--border2);background:var(--s1);color:var(--text3);cursor:pointer;}
+.shift-edit-ward{font-family:'Martian Mono',monospace;font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid var(--border2);background:var(--s1);color:var(--text3);cursor:pointer;}
 .shift-edit-ward.on{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.35);color:#a5b4fc;}
-.add-shift-btn{width:100%;padding:12px;background:transparent;border:1px dashed var(--border2);border-radius:var(--r);color:var(--text3);font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:8px;}
+.add-shift-btn{width:100%;padding:12px;background:transparent;border:1px dashed var(--border2);border-radius:var(--r);color:var(--text3);font-size:14px;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;margin-bottom:8px;}
 .kind-mini{display:flex;gap:6px;margin-bottom:10px;}
 .km{padding:4px 10px;border-radius:5px;border:1px solid var(--border2);background:var(--s1);color:var(--text3);font-size:11px;font-weight:500;cursor:pointer;}
 .km.on{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.35);color:#a5b4fc;}
@@ -337,25 +370,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .tcf label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase;}
 .tcr{display:flex;align-items:center;gap:8px;}
 .tcr input[type=color]{width:34px;height:34px;border:1px solid var(--border2);border-radius:6px;padding:2px;background:var(--s1);cursor:pointer;-webkit-appearance:none;}
-.tcr input[type=text]{flex:1;background:var(--s1);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:13px;font-family:'DM Mono',monospace;outline:none;}
+.tcr input[type=text]{flex:1;background:var(--s1);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:13px;font-family:'Martian Mono',monospace;outline:none;}
 /* SETUP */
 .setup-scroll{flex:1;overflow-y:auto;padding:24px 20px 40px;}
-.setup-step{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.setup-step{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
 .setup-title{font-size:22px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.2;}
 .setup-sub{font-size:14px;color:var(--text2);margin-bottom:28px;line-height:1.6;}
-.setup-inp{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:13px 15px;color:var(--text);font-size:16px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px;}
+.setup-inp{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:13px 15px;color:var(--text);font-size:16px;font-family:'Hanken Grotesk',sans-serif;outline:none;margin-bottom:10px;}
 .setup-inp:focus{border-color:rgba(99,102,241,.4);}
-.setup-next-btn{width:100%;padding:14px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:16px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px;}
-.setup-skip{width:100%;padding:10px;background:transparent;border:none;color:var(--text3);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:4px;}
+.setup-next-btn{width:100%;padding:14px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:16px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;margin-top:8px;}
+.setup-skip{width:100%;padding:10px;background:transparent;border:none;color:var(--text3);font-size:13px;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;margin-top:4px;}
 .ward-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
 .ward-tag{display:flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:13px;color:var(--text);animation:cardIn .2s ease;}
 .ward-tag-del{color:var(--text3);cursor:pointer;font-size:15px;line-height:1;}
 .ward-add-row{display:flex;gap:8px;}
-.ward-add-row input{flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;}
-.ward-add-row button{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:var(--rs);padding:11px 16px;color:#a5b4fc;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
-.setup-progress{display:flex;gap:6px;margin-bottom:28px;}
-.setup-dot{width:8px;height:8px;border-radius:50%;background:var(--s3);transition:background .2s;}
-.setup-dot.on{background:#6366f1;}
+.ward-add-row input{flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:15px;font-family:'Hanken Grotesk',sans-serif;outline:none;}
+.ward-add-row button{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:var(--rs);padding:11px 16px;color:#a5b4fc;font-size:14px;font-weight:500;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;}
+.setup-progress{display:flex;gap:5px;margin-bottom:24px;}
+.setup-dot{flex:1;height:3px;border-radius:2px;background:var(--s3);transition:background .2s;}
+.setup-dot.on{background:var(--acc);}
+.setup-step{font-family:'Martian Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
 .base-pick{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
 .base-opt{padding:13px 10px;border-radius:var(--r);border:1px solid var(--border2);background:var(--s2);color:var(--text2);font-size:14px;font-weight:500;text-align:center;cursor:pointer;transition:all .15s;}
 .base-opt.on{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.35);color:#34d399;}
@@ -364,7 +398,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .end-summary-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px;}
 .end-stat-row{display:flex;justify-content:space-between;}
 .end-stat{text-align:center;flex:1;}
-.end-stat-n{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--text);}
+.end-stat-n{font-family:'Martian Mono',monospace;font-size:22px;font-weight:500;color:var(--text);}
 .end-stat-l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
 /* HO SUMMARY */
 .ho-sum-mod{background:var(--s1);border:1px solid var(--border2);border-top-left-radius:18px;border-top-right-radius:18px;width:100%;max-height:90vh;display:flex;flex-direction:column;animation:sheetUp .25s ease;}
@@ -372,10 +406,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .ho-sum-entry{margin-bottom:18px;border-bottom:1px solid var(--border);padding-bottom:14px;}
 .ho-sum-entry:last-child{border-bottom:none;}
 .ho-sum-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px;}
-.ho-sum-loc{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);margin-bottom:6px;}
+.ho-sum-loc{font-family:'Martian Mono',monospace;font-size:11px;color:var(--text2);margin-bottom:6px;}
 .ho-sum-line{font-size:13px;color:var(--text2);margin-bottom:3px;line-height:1.4;}
 .ho-sum-line span{color:var(--text);}
-.ho-copy-btn{width:calc(100% - 40px);margin:0 20px 20px;padding:12px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;flex-shrink:0;}
+.ho-copy-btn{width:calc(100% - 40px);margin:0 20px 20px;padding:12px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;flex-shrink:0;}
 /* MODALS + SHEETS */
 .mbg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:300;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
 .mbg.open{display:flex;animation:scrIn .18s ease;}
@@ -386,7 +420,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .md{font-size:13px;color:var(--text2);margin-bottom:5px;}
 .md span{color:var(--text);}
 .mbs{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
-.mb{width:100%;padding:13px;border-radius:var(--r);border:1px solid var(--border2);background:var(--s2);color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left;transition:background .12s;}
+.mb{width:100%;padding:13px;border-radius:var(--r);border:1px solid var(--border2);background:var(--s2);color:var(--text);font-size:15px;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;text-align:left;transition:background .12s;}
 .mb:active{background:var(--s3);}
 .mb.done{color:var(--low);border-color:var(--low-line);background:var(--low-dim);}
 .mb.wait{color:var(--wc);border-color:var(--wl);background:var(--wb);}
@@ -398,28 +432,28 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .qs-sheet{background:var(--s1);border:1px solid var(--border2);border-top-left-radius:18px;border-top-right-radius:18px;width:100%;max-height:92vh;overflow-y:auto;padding:20px 20px 40px;animation:sheetUp .25s ease;}
 .qs-field{margin-bottom:14px;}
 .qs-field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;}
-.qs-field input,.qs-field select{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s;}
+.qs-field input,.qs-field select{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:15px;font-family:'Hanken Grotesk',sans-serif;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s;}
 .qs-field input:focus,.qs-field select:focus{border-color:rgba(99,102,241,.4);}
 .qs-actions{display:flex;gap:8px;margin-top:4px;}
-.qs-save{flex:1;padding:13px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;}
-.qs-another{padding:13px 16px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;}
+.qs-save{flex:1;padding:13px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;}
+.qs-another{padding:13px 16px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:14px;font-weight:500;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;}
 /* WO SHEET */
 .wo-sheet{background:var(--s1);border:1px solid var(--border2);border-top-left-radius:18px;border-top-right-radius:18px;width:100%;padding:20px 20px 40px;animation:sheetUp .25s ease;}
 .wo-sheet h3{font-size:15px;font-weight:600;margin-bottom:4px;}
 .wo-sheet p{font-size:13px;color:var(--text2);margin-bottom:14px;}
-.wo-inp{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:12px 14px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px;}
+.wo-inp{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:12px 14px;color:var(--text);font-size:15px;font-family:'Hanken Grotesk',sans-serif;outline:none;margin-bottom:10px;}
 .wo-inp:focus{border-color:rgba(129,140,248,.4);}
 .wo-sugs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
 .wo-sug{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--s2);color:var(--text2);cursor:pointer;}
-.wo-confirm{width:100%;padding:13px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:8px;}
-.wo-skip{width:100%;padding:11px;background:transparent;border:1px solid var(--border2);border-radius:var(--r);color:var(--text3);font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;}
+.wo-confirm{width:100%;padding:13px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;margin-bottom:8px;}
+.wo-skip{width:100%;padding:11px;background:transparent;border:1px solid var(--border2);border-radius:var(--r);color:var(--text3);font-size:14px;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;}
 /* CONFIRM SHEET */
 .conf-sheet{background:var(--s1);border:1px solid var(--border2);border-top-left-radius:18px;border-top-right-radius:18px;width:100%;padding:20px 20px 40px;animation:sheetUp .25s ease;}
 /* TOAST */
-.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--s3);border:1px solid var(--border2);border-radius:var(--r);padding:10px 16px 10px 18px;font-size:13px;color:var(--text);z-index:500;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;max-width:92vw;display:flex;align-items:center;gap:16px;box-shadow:0 6px 20px rgba(0,0,0,.4);}
-.toast.show{opacity:1;}
+.toast{position:fixed;top:80px;left:50%;transform:translate(-50%,-14px);background:var(--s3);border:1px solid var(--border2);border-radius:var(--r);padding:10px 16px 10px 18px;font-size:13px;color:var(--text);z-index:500;opacity:0;transition:opacity .25s ease,transform .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;max-width:92vw;display:flex;align-items:center;gap:16px;box-shadow:0 6px 20px rgba(0,0,0,.4);}
+.toast.show{opacity:1;transform:translate(-50%,0);}
 .toast.has-undo{pointer-events:auto;}
-.toast-undo{display:none;background:transparent;border:none;color:#a5b4fc;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;padding:2px 4px;letter-spacing:.02em;}
+.toast-undo{display:none;background:transparent;border:none;color:#a5b4fc;font-size:13px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;padding:2px 4px;letter-spacing:.02em;}
 .toast.has-undo .toast-undo{display:inline;}
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -434,19 +468,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <div class="screen active" id="screen-home">
   <div class="home-screen">
     <div class="home-logo">
-      <svg width="88" height="88" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="88" height="88" rx="20" fill="#0a0e1e"/>
-        <rect x="16" y="26" width="56" height="38" rx="7" fill="#1e2860" stroke="rgba(110,130,240,0.7)" stroke-width="1.2"/>
-        <rect x="22" y="32" width="44" height="17" rx="4" fill="#10163a"/>
-        <rect x="27" y="37" width="16" height="2.5" rx="1.25" fill="rgba(140,160,255,0.65)"/>
-        <rect x="27" y="43" width="28" height="3.5" rx="1.75" fill="rgba(200,215,255,0.88)"/>
-        <rect x="22" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.85)"/>
-        <rect x="38" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.5)"/>
-        <rect x="54" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.5)"/>
-        <circle cx="70" cy="25" r="6" fill="#ef4444"/>
-        <circle cx="68.5" cy="23" r="2" fill="rgba(255,180,180,0.55)"/>
-      </svg>
-      <div class="home-wordmark">Slate</div>
+      <div class="serif-wm" style="font-size:64px;line-height:1;color:var(--text);position:relative;display:inline-block;margin-left:-2px;">Slate<span style="position:absolute;top:8px;right:-11px;width:9px;height:9px;border-radius:50%;background:var(--dot);"></span></div>
     </div>
     <div class="home-greeting" id="home-greeting">Hello</div>
     <div class="home-sub" id="home-sub"></div>
@@ -459,23 +481,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <!-- SETUP 1 -->
 <div class="screen" id="screen-setup-welcome">
   <div class="setup-scroll">
-    <div style="margin:0 0 20px;text-align:center;">
-      <svg width="64" height="64" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="88" height="88" rx="20" fill="#0a0e1e"/>
-        <rect x="16" y="26" width="56" height="38" rx="7" fill="#1e2860" stroke="rgba(110,130,240,0.7)" stroke-width="1.2"/>
-        <rect x="22" y="32" width="44" height="17" rx="4" fill="#10163a"/>
-        <rect x="27" y="37" width="16" height="2.5" rx="1.25" fill="rgba(140,160,255,0.65)"/>
-        <rect x="27" y="43" width="28" height="3.5" rx="1.75" fill="rgba(200,215,255,0.88)"/>
-        <rect x="22" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.85)"/>
-        <rect x="38" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.5)"/>
-        <rect x="54" y="53" width="12" height="6" rx="3" fill="rgba(90,110,220,0.5)"/>
-        <circle cx="70" cy="25" r="6" fill="#ef4444"/>
-      </svg>
+    <div style="margin:0 0 28px;text-align:center;">
+      <div class="serif-wm" style="font-size:52px;line-height:1;color:var(--text);position:relative;display:inline-block;">Slate<span style="position:absolute;top:6px;right:-9px;width:7px;height:7px;border-radius:50%;background:var(--dot);"></span></div>
     </div>
     <div class="setup-progress"><div class="setup-dot on"></div><div class="setup-dot"></div><div class="setup-dot"></div><div class="setup-dot"></div></div>
-    <div class="setup-step">Step 1 of 4</div>
-    <div class="setup-title">Welcome to Slate</div>
-    <div class="setup-sub">A job list for the shift. Quick setup &mdash; about a minute.</div>
+    <div class="setup-step">01 / 04</div>
+    <div class="setup-title">First &mdash; who are you?</div>
+    <div class="setup-sub">So Slate can greet you properly at the start of a shift. Takes about a minute to set up.</div>
     <div class="field"><label>Your name</label><input type="text" id="setup-name" class="setup-inp" placeholder="Your first name" autocomplete="given-name"></div>
     <button class="setup-next-btn" onclick="setupNext1()">Continue</button>
     <button class="setup-skip" onclick="setupSkipAll()">Skip setup</button>
@@ -486,9 +498,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <div class="screen" id="screen-setup-wards">
   <div class="setup-scroll">
     <div class="setup-progress"><div class="setup-dot"></div><div class="setup-dot on"></div><div class="setup-dot"></div><div class="setup-dot"></div></div>
-    <div class="setup-step">Step 2 of 4</div>
-    <div class="setup-title">Your wards</div>
-    <div class="setup-sub">Add every ward you work on or cover. Change these later in Settings.</div>
+    <div class="setup-step">02 / 04</div>
+    <div class="setup-title">Where do you work?</div>
+    <div class="setup-sub">Add every ward you work on or cover. You can change these any time in Settings.</div>
     <div class="ward-tags" id="setup-ward-tags"></div>
     <div class="ward-add-row"><input type="text" id="setup-ward-inp" placeholder="Ward name..." maxlength="20" autocomplete="off"><button onclick="addSetupWard()">Add</button></div>
     <button class="setup-next-btn" style="margin-top:20px;" onclick="setupNext2()">Continue</button>
@@ -500,9 +512,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <div class="screen" id="screen-setup-base">
   <div class="setup-scroll">
     <div class="setup-progress"><div class="setup-dot"></div><div class="setup-dot"></div><div class="setup-dot on"></div><div class="setup-dot"></div></div>
-    <div class="setup-step">Step 3 of 4</div>
-    <div class="setup-title">Your base ward</div>
-    <div class="setup-sub">The ward you work on day to day. Change it in Settings when you rotate.</div>
+    <div class="setup-step">03 / 04</div>
+    <div class="setup-title">Your home ward</div>
+    <div class="setup-sub">The one you work day to day &mdash; it pre-fills new tasks. Change it in Settings when you rotate.</div>
     <div class="base-pick" id="setup-base-pick"></div>
     <button class="setup-next-btn" style="margin-top:20px;" onclick="setupNext3()">Continue</button>
   </div>
@@ -512,9 +524,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <div class="screen" id="screen-setup-shifts">
   <div class="setup-scroll">
     <div class="setup-progress"><div class="setup-dot"></div><div class="setup-dot"></div><div class="setup-dot"></div><div class="setup-dot on"></div></div>
-    <div class="setup-step">Step 4 of 4</div>
+    <div class="setup-step">04 / 04</div>
     <div class="setup-title">Your on-call shifts</div>
-    <div class="setup-sub">Add the cover and take shifts you work. Add more later in Settings.</div>
+    <div class="setup-sub">Add the cover and take shifts you work. You can always add more later.</div>
     <div id="setup-shift-list"></div>
     <button class="ho-new-btn" onclick="addSetupShift()">+ Add shift</button>
     <button class="setup-next-btn" onclick="setupFinish()">Finish setup</button>
@@ -523,7 +535,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 
 <!-- TASK LIST -->
 <div class="screen" id="screen-list">
-  <div class="hdr"><div class="hdr-top"><span class="wm">Slate</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);" id="hdr-date"></span></div></div>
+  <div class="hdr"><div class="hdr-top"><span class="wm">Slate</span><span style="font-family:'Martian Mono',monospace;font-size:11px;color:var(--text3);" id="hdr-date"></span></div></div>
   <div class="shift-bars" id="shift-bars"></div>
   <div class="stats">
     <div class="stat" id="stat-pending" onclick="statFilter('pending')"><div class="sn amber" id="st-pending">0</div><div class="sl">Pending</div></div>
@@ -542,12 +554,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
   <div class="fhdr">
     <div class="bk" onclick="gNav('tasks')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div>
     <h2 id="add-title">New task</h2>
-    <span id="add-pt-hint" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;"></span>
+    <span id="add-pt-hint" style="font-family:'Martian Mono',monospace;font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;"></span>
   </div>
   <div class="fs">
     <div class="field" id="f-ctx-field" style="display:none;"><label>For</label><div class="sg" id="f-ctx-seg"></div></div>
     <div class="field"><label>Type</label><div class="ttg" id="f-type-grid"></div><div class="sugs" id="f-sugs"></div></div>
     <div class="field"><label style="color:var(--text);">What needs doing</label><input type="text" id="f-desc" placeholder="e.g. Chase potassium" autocomplete="off"></div>
+    <div class="fr">
+      <div class="field"><label>Ward</label><select id="f-ward" onchange="updAddHint()"></select></div>
+      <div class="field"><label>Bed</label><input type="text" id="f-bed" placeholder="e.g. B4" maxlength="12" autocomplete="off" oninput="updAddHint()"></div>
+    </div>
     <div class="field"><label>Priority</label>
       <div class="sg" id="f-prio-grp">
         <div class="so" data-v="urgent" onclick="pickPrio(this)">Urgent</div>
@@ -555,6 +571,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
         <div class="so" data-v="low" onclick="pickPrio(this)">Low</div>
       </div>
     </div>
+    <div id="f-more-toggle" onclick="toggleMoreDetails()" style="display:flex;align-items:center;gap:8px;color:var(--text2);font-size:14px;margin:4px 0 6px;padding:4px 2px;cursor:pointer;"><span id="f-more-caret" style="font-size:11px;">▸</span> More details <span style="font-family:'Martian Mono',monospace;font-size:10px;color:var(--text3);">— status, initials, escalation, notes</span></div>
+    <div id="f-more" style="display:none;">
     <div class="field"><label>Status</label>
       <div class="sg" id="f-status-grp">
         <div class="so on-pending" data-v="pending" onclick="pickStatus(this)">Pending</div>
@@ -565,26 +583,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <div class="field" id="f-waiting-field" style="display:none;">
       <label>Waiting on</label>
       <input type="text" id="f-waiting-on" placeholder="e.g. Bloods, imaging, callback..." autocomplete="off">
-      <div class="wsug-row">
-        <span class="wsug" onclick="setWsug('Bloods')">Bloods</span>
-        <span class="wsug" onclick="setWsug('Imaging')">Imaging</span>
-        <span class="wsug" onclick="setWsug('Callback')">Callback</span>
-        <span class="wsug" onclick="setWsug('Bed manager')">Bed manager</span>
-        <span class="wsug" onclick="setWsug('Reg review')">Reg review</span>
-        <span class="wsug" onclick="setWsug('Family')">Family</span>
-      </div>
+      <div class="wsug-row" id="f-wsug-row"></div>
     </div>
     <div class="fsec-hdr">Patient</div>
-    <div class="fr">
-      <div class="field"><label>Ward</label><select id="f-ward" onchange="updAddHint()"></select></div>
-      <div class="field"><label>Bed</label><input type="text" id="f-bed" placeholder="e.g. B4" maxlength="12" autocomplete="off" oninput="updAddHint()"></div>
-    </div>
     <div class="fr">
       <div class="field"><label>Initials</label><input type="text" id="f-initials" placeholder="e.g. JB" maxlength="5" autocomplete="off" style="text-transform:uppercase;" oninput="updAddHint()"></div>
       <div class="field"><label>Hospital ID</label><input type="text" id="f-hosid" placeholder="e.g. 123456" maxlength="20" autocomplete="off" inputmode="numeric"></div>
     </div>
     <div class="field"><label>Escalation (optional)</label><input type="text" id="f-escalation" placeholder="e.g. Reg aware..." autocomplete="off"></div>
     <div class="field"><label>Notes (optional)</label><textarea id="f-notes" placeholder="Additional details..."></textarea></div>
+    </div>
   </div>
   <div class="add-actions">
     <button class="anobtn-b" onclick="saveTask(true)">+ Another</button>
@@ -593,7 +601,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 </div>
 <!-- BLEEPS -->
 <div class="screen" id="screen-bleeps">
-  <div class="hdr" style="padding-bottom:12px;"><div class="hdr-top"><span class="wm">Bleeps</span><span id="bq-count" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);"></span></div></div>
+  <div class="hdr" style="padding-bottom:12px;"><div class="hdr-top"><span class="wm">Bleeps</span><span id="bq-count" style="font-family:'Martian Mono',monospace;font-size:11px;color:var(--text3);"></span></div></div>
   <div class="bq-inp">
     <div class="bq-row">
       <div class="bqf"><label>Number</label><input type="tel" id="bq-num" placeholder="1234" maxlength="6" inputmode="numeric"></div>
@@ -606,10 +614,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
   <div class="bnav" id="bn3"></div>
 </div>
 
-<!-- HANDOVER -->
+<!-- PATIENTS (Aware + Handover out) -->
 <div class="screen" id="screen-handover">
-  <div class="hdr" style="padding-bottom:12px;"><div class="hdr-top"><span class="wm">Handover</span><span id="ho-count" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);"></span></div></div>
-  <div class="ho-scr" id="ho-scr"></div>
+  <div class="hdr" style="padding-bottom:10px;"><div class="hdr-top"><span class="wm">Patients</span><span id="ho-count" style="font-family:'Martian Mono',monospace;font-size:11px;color:var(--text3);"></span></div>
+    <div style="display:flex;gap:4px;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:3px;margin-top:10px;">
+      <div id="pv-aware" onclick="switchPatientsView('aware')" style="flex:1;text-align:center;padding:7px 0;border-radius:6px;font-size:12.5px;font-weight:600;cursor:pointer;background:rgba(167,139,250,.14);color:#a78bfa;">Aware</div>
+      <div id="pv-ho" onclick="switchPatientsView('ho')" style="flex:1;text-align:center;padding:7px 0;border-radius:6px;font-size:12.5px;font-weight:500;cursor:pointer;color:var(--text3);">Handover out</div>
+    </div>
+  </div>
+  <div class="ho-scr" id="aware-scr"></div>
+  <div class="ho-scr" id="ho-scr" style="display:none;"></div>
   <div class="bnav" id="bn4"></div>
 </div>
 
@@ -638,7 +652,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5;">Add each patient as handed over. Tap <strong>Add next</strong> after each one.</div>
     <div id="hxover-added"></div>
     <div id="hxover-card">
-      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;" id="hxover-pt-num">Patient 1</div>
+      <div style="font-family:'Martian Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;" id="hxover-pt-num">Patient 1</div>
       <div class="fr">
         <div class="field"><label>Ward</label><select id="hx-ward"></select></div>
         <div class="field"><label>Bed</label><input type="text" id="hx-bed" placeholder="e.g. B4" maxlength="12" autocomplete="off"></div>
@@ -649,7 +663,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
       </div>
       <div class="field"><label>Situation</label><input type="text" id="hx-situation" placeholder="e.g. AKI, awaiting nephro review" autocomplete="off"></div>
       <div class="field"><label>Jobs (optional)</label><div id="hx-jobs-list" style="margin-bottom:6px;"></div>
-        <div style="display:flex;gap:8px;"><input type="text" id="hx-job-inp" placeholder="Add a job..." autocomplete="off" style="flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 13px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"><button onclick="addHxJob()" style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:var(--rs);padding:8px 14px;color:#a5b4fc;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;">Add</button></div>
+        <div style="display:flex;gap:8px;"><input type="text" id="hx-job-inp" placeholder="Add a job..." autocomplete="off" style="flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 13px;color:var(--text);font-size:14px;font-family:'Hanken Grotesk',sans-serif;outline:none;"><button onclick="addHxJob()" style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:var(--rs);padding:8px 14px;color:#a5b4fc;font-size:14px;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;">Add</button></div>
       </div>
       <div class="field"><label>Priority</label>
         <div class="sg" id="hx-prio-grp">
@@ -658,47 +672,55 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
           <div class="so" data-v="low" onclick="pickHxPrio(this)">Low</div>
         </div>
       </div>
-      <button onclick="addHxNext()" style="width:100%;padding:13px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:8px;">Add next patient</button>
-      <button onclick="finishHxover()" style="width:100%;padding:13px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;">Done &mdash; start</button>
+      <button onclick="addHxNext()" style="width:100%;padding:13px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:15px;font-weight:500;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;margin-bottom:8px;">Add next patient</button>
+      <button onclick="finishHxover()" style="width:100%;padding:13px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-size:15px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;">Done &mdash; start</button>
     </div>
   </div>
 </div>
 
 <!-- SETTINGS -->
 <div class="screen" id="screen-settings">
-  <div class="hdr" style="padding-bottom:12px;"><div class="hdr-top"><span class="wm">Settings</span></div></div>
+  <div class="hdr" style="padding-bottom:12px;"><div class="hdr-top"><span class="serif-wm" style="font-size:24px;color:var(--text);">Slate</span><span style="font-family:'Martian Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.06em;">v4.0 · local only</span></div></div>
   <div class="settings-scroll">
+    <div class="sgroup">You</div>
     <div class="ssec">
-      <div class="sstitle">Profile</div>
       <div class="scard">
-        <div class="srow"><div class="srl"><div>Your name</div></div><input type="text" id="name-inp" placeholder="Not set" oninput="setName(this.value)" maxlength="30" autocomplete="given-name" style="background:var(--s1);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;max-width:150px;text-align:right;"></div>
-        <div class="srow"><div class="srl"><div>Base ward</div><div class="srs">Your day-to-day ward</div></div><select id="base-ward-sel" onchange="setBaseWard(this.value)" style="background:var(--s1);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;max-width:140px;-webkit-appearance:none;"></select></div>
+        <div class="srow"><div class="srl"><div>Your name</div></div><input type="text" id="name-inp" placeholder="Not set" oninput="setName(this.value)" maxlength="30" autocomplete="given-name" style="background:var(--s1);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:14px;font-family:'Hanken Grotesk',sans-serif;outline:none;max-width:150px;text-align:right;"></div>
+        <div class="srow"><div class="srl"><div>Base ward</div><div class="srs">Pre-fills new tasks</div></div><select id="base-ward-sel" onchange="setBaseWard(this.value)" style="background:var(--s1);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-size:13px;font-family:'Hanken Grotesk',sans-serif;outline:none;max-width:140px;-webkit-appearance:none;"></select></div>
       </div>
+      <div class="ted" style="margin-top:8px;"><div class="tedhdr"><span id="ted-name">Appearance</span><span class="tedrst" onclick="rstTheme()">Reset</span></div><div class="tgrid" id="tgrid"></div><div class="tcgrid" id="tcgrid" style="margin-top:12px;"></div></div>
     </div>
+
+    <div class="sgroup">Your setup</div>
     <div class="ssec"><div class="sstitle">Wards</div><div class="scard" id="ward-settings"></div>
-      <div style="display:flex;gap:8px;margin-top:8px;"><input type="text" id="new-ward-inp" placeholder="Ward name..." style="flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 13px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;" maxlength="20"><button style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:var(--rs);padding:8px 14px;color:#a5b4fc;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="addWard()">Add</button></div>
+      <div style="display:flex;gap:8px;margin-top:8px;"><input type="text" id="new-ward-inp" placeholder="Ward name..." style="flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 13px;color:var(--text);font-size:14px;font-family:'Hanken Grotesk',sans-serif;outline:none;" maxlength="20"><button style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:var(--rs);padding:8px 14px;color:#a5b4fc;font-size:14px;font-weight:500;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;" onclick="addWard()">Add</button></div>
     </div>
     <div class="ssec"><div class="sstitle">On-call shifts</div><div id="shift-type-settings"></div><button class="add-shift-btn" onclick="addShiftType()">+ Add shift</button></div>
     <div class="ssec"><div class="sstitle">Task types</div><div class="scard" id="task-type-settings"></div>
-      <div style="display:flex;gap:8px;margin-top:8px;"><input type="text" id="new-tt-inp" placeholder="Task type..." style="flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 13px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;" maxlength="20"><button style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:var(--rs);padding:8px 14px;color:#a5b4fc;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="addTaskType()">Add</button></div>
+      <div style="display:flex;gap:8px;margin-top:8px;"><input type="text" id="new-tt-inp" placeholder="Task type..." style="flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 13px;color:var(--text);font-size:14px;font-family:'Hanken Grotesk',sans-serif;outline:none;" maxlength="20"><button style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:var(--rs);padding:8px 14px;color:#a5b4fc;font-size:14px;font-weight:500;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;" onclick="addTaskType()">Add</button></div>
     </div>
-    <div class="ssec"><div class="sstitle">Analytics</div><button class="dbtn" onclick="gNav('shift');setTimeout(function(){if(document.getElementById('ana-section').style.display==='none')toggleAnalytics();},100);"><span>&#128202;</span> View shift analytics</button></div>
-    <div class="ssec"><div class="sstitle">Appearance</div><div class="tgrid" id="tgrid"></div><div class="ted"><div class="tedhdr"><span id="ted-name">Customise</span><span class="tedrst" onclick="rstTheme()">Reset</span></div><div class="tcgrid" id="tcgrid"></div></div></div>
-    <div class="ssec"><div class="sstitle">Data</div>
-      <button class="dbtn" onclick="expData()"><span>&#128228;</span> Save a backup</button>
-      <button class="dbtn" onclick="document.getElementById('imp-file').click()"><span>&#128229;</span> Import backup</button>
+    <div class="ssec"><div class="sstitle">Waiting on</div><div class="srs" style="margin:-4px 0 8px;color:var(--text3);">The quick chips offered when you park a job.</div><div class="scard" id="waiting-on-settings"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;"><input type="text" id="new-wo-inp" placeholder="New chip..." style="flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 13px;color:var(--text);font-size:14px;font-family:'Hanken Grotesk',sans-serif;outline:none;" maxlength="22"><button style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:var(--rs);padding:8px 14px;color:#a5b4fc;font-size:14px;font-weight:500;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;" onclick="addWaitingOn()">Add</button></div>
+    </div>
+    <div class="ssec"><div class="sstitle">Bleep directory</div><div class="srs" style="margin:-4px 0 8px;color:var(--text3);">Numbers you know, so the queue labels itself.</div><div class="scard" id="bleep-dir-settings"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;"><input type="text" id="new-bd-num" placeholder="Number" inputmode="numeric" style="width:96px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:14px;font-family:'Martian Mono',monospace;outline:none;" maxlength="10"><select id="new-bd-ward" style="flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:14px;font-family:'Hanken Grotesk',sans-serif;outline:none;-webkit-appearance:none;"></select><button style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:var(--rs);padding:8px 14px;color:#a5b4fc;font-size:14px;font-weight:500;cursor:pointer;font-family:'Hanken Grotesk',sans-serif;" onclick="addBleepDir()">Add</button></div>
+    </div>
+
+    <div class="sgroup">Data</div>
+    <div class="ssec">
+      <button class="dbtn" onclick="gNav('shift');setTimeout(function(){if(document.getElementById('ana-section').style.display==='none')toggleAnalytics();},100);"><span>&#128202;</span><div><div>Shift analytics</div><div style="font-size:12px;color:var(--text3);margin-top:1px;">Trends across your shifts</div></div></button>
+      <button class="dbtn" onclick="expData()"><span>&#128228;</span><div><div>Save a backup</div><div style="font-size:12px;color:var(--text3);margin-top:1px;">Export your data as JSON</div></div></button>
+      <button class="dbtn" onclick="document.getElementById('imp-file').click()"><span>&#128229;</span><div><div>Import backup</div><div style="font-size:12px;color:var(--text3);margin-top:1px;">Restore from a previous export</div></div></button>
       <input type="file" id="imp-file" accept=".json" style="display:none;" onchange="impData(event)">
-      <button class="dbtn dng" onclick="showConf('clrData','Wipe everything?','This cannot be undone.','Wipe everything')"><span>&#128465;</span> Wipe everything</button>
-    </div>
-    <div class="ssec"><div class="sstitle">About</div>
-      <div class="scard">
-        <div class="srow"><div class="srl"><div>Slate</div><div class="srs">For the shift</div></div></div>
-        <div class="srow"><div class="srl"><div>Version</div><div class="srs">3.2</div></div></div>
-        <div class="srow"><div class="srl"><div>Data storage</div><div class="srs">Local only &mdash; never leaves your device</div></div></div>
-        <div class="srow"><div class="srl"><div>Start over</div></div><span style="color:var(--text3);font-size:13px;cursor:pointer;" onclick="runSetup()">Run</span></div>
+      <div class="scard" style="margin-top:8px;">
+        <div class="srow"><div class="srl"><div>Data storage</div><div class="srs">Never leaves your device</div></div></div>
+        <div class="srow"><div class="srl"><div>Re-run setup</div></div><span style="color:#a5b4fc;font-size:13px;font-weight:500;cursor:pointer;" onclick="runSetup()">Run &#9656;</span></div>
       </div>
     </div>
-    <div style="height:20px;"></div>
+    <div style="margin-top:16px;">
+      <div class="sdanger-lbl">Danger zone</div>
+      <button class="dbtn dng" onclick="showConf('clrData','Wipe everything?','This cannot be undone.','Wipe everything')"><span>&#128465;</span><div><div>Wipe everything</div><div style="font-size:12px;color:#a06060;margin-top:1px;">Permanently delete all data</div></div></button>
+    </div>
   </div>
   <div class="bnav" id="bn5"></div>
 </div>
@@ -709,22 +731,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
   <div class="modal">
     <div class="mh"></div>
     <h3 id="tm-title"></h3>
-    <div class="md">Ward: <span id="tm-ward"></span> &middot; Bed: <span id="tm-bed"></span></div>
-    <div class="md" id="tm-id-row" style="display:none;">Hospital ID: <span id="tm-hosid"></span></div>
-    <div class="md">Type: <span id="tm-type"></span> &middot; Priority: <span id="tm-prio"></span></div>
-    <div class="md">Logged: <span id="tm-time"></span></div>
-    <div class="md" id="tm-wait-row" style="display:none;">Waiting on: <span id="tm-wait"></span></div>
-    <div class="md" id="tm-esc-row" style="display:none;">Escalation: <span id="tm-esc"></span></div>
-    <div class="md" id="tm-notes-row" style="display:none;">Notes: <span id="tm-notes"></span></div>
-    <div class="mbs">
-      <button class="mb done" id="tm-done-btn" onclick="tmStatus('done')">Mark as done</button>
-      <button class="mb wait" id="tm-wait-btn" onclick="tmStatus('waiting')">Mark as waiting</button>
-      <button class="mb" id="tm-pending-btn" onclick="tmStatus('pending')">Mark as pending</button>
-      <button class="mb ho-btn" id="tm-ho-btn" onclick="tmAddToHO()">Add to handover</button>
-      <button class="mb" onclick="tmAddJobForPatient()">Add job for this patient</button>
-      <button class="mb" onclick="tmEdit()">Edit task</button>
-      <button class="mb dng" onclick="showConf('tmDelete','Remove this task?','This can\'t be undone.','Remove')">Delete task</button>
-      <button class="mb mut" onclick="document.getElementById('task-modal').classList.remove('open')">Cancel</button>
+    <div class="md" id="tm-metaline" style="margin-bottom:18px;"></div>
+    <div id="tm-wait-row" style="display:none;font-size:13px;color:var(--wc);margin:-10px 0 16px;">Waiting on: <span id="tm-wait"></span></div>
+    <div id="tm-esc-row" style="display:none;font-size:13px;color:var(--routine);margin:-10px 0 16px;">Escalation: <span id="tm-esc"></span></div>
+    <div id="tm-notes-row" style="display:none;font-size:13px;color:var(--text2);margin:-10px 0 16px;">Notes: <span id="tm-notes"></span></div>
+    <span style="display:block;font-size:11px;color:var(--text2);margin-bottom:7px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;">Status</span>
+    <div style="display:flex;gap:4px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:20px;">
+      <div class="tm-seg" id="tm-seg-pending" onclick="tmStatus('pending')" style="flex:1;text-align:center;padding:10px 0;border-radius:7px;font-size:13.5px;font-weight:500;cursor:pointer;color:var(--text2);">Pending</div>
+      <div class="tm-seg" id="tm-seg-waiting" onclick="tmStatus('waiting')" style="flex:1;text-align:center;padding:10px 0;border-radius:7px;font-size:13.5px;font-weight:500;cursor:pointer;color:var(--text2);">Waiting</div>
+      <div class="tm-seg" id="tm-seg-done" onclick="tmStatus('done')" style="flex:1;text-align:center;padding:10px 0;border-radius:7px;font-size:13.5px;font-weight:500;cursor:pointer;color:var(--text2);">Done</div>
+    </div>
+    <span style="display:block;font-size:11px;color:var(--text2);margin-bottom:7px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;">For this patient</span>
+    <div style="display:flex;gap:8px;margin-bottom:22px;">
+      <button class="mb ho-btn" id="tm-ho-btn" onclick="tmAddToHO()" style="flex:1;text-align:center;margin:0;">Add to handover</button>
+      <button class="mb" onclick="tmAddJobForPatient()" style="flex:1;text-align:center;margin:0;">Add a job</button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:15px;">
+      <span style="font-size:14px;color:var(--text2);font-weight:500;cursor:pointer;padding:4px 0;" onclick="tmEdit()">Edit task</span>
+      <span style="font-size:14px;color:#a86b6b;font-weight:500;cursor:pointer;padding:4px 0;" onclick="showConf('tmDelete','Remove this task?','This can\'t be undone.','Remove')">Delete</span>
     </div>
   </div>
 </div>
@@ -767,14 +791,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <h3>Waiting on what?</h3>
     <p>Optional &mdash; tap a suggestion or type your own</p>
     <input type="text" id="wo-inp" class="wo-inp" placeholder="e.g. Bloods, imaging, callback..." autocomplete="off">
-    <div class="wo-sugs">
-      <span class="wo-sug" onclick="setWO('Bloods')">Bloods</span>
-      <span class="wo-sug" onclick="setWO('Imaging')">Imaging</span>
-      <span class="wo-sug" onclick="setWO('Callback')">Callback</span>
-      <span class="wo-sug" onclick="setWO('Bed manager')">Bed manager</span>
-      <span class="wo-sug" onclick="setWO('Reg review')">Reg review</span>
-      <span class="wo-sug" onclick="setWO('Family')">Family</span>
-    </div>
+    <div class="wo-sugs" id="wo-sugs-box"></div>
     <button class="wo-confirm" onclick="confirmWO()">Confirm</button>
     <button class="wo-skip" onclick="skipWO()">Skip</button>
   </div>
@@ -786,8 +803,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <div class="mh"></div>
     <h3 id="end-title">End shift?</h3>
     <div class="end-summary" id="end-summary"></div>
+    <div id="end-triage"></div>
     <div class="mbs">
-      <button class="mb dng" onclick="confirmEndCtx()">End shift</button>
+      <button class="mb dng" id="end-confirm-btn" onclick="confirmEndCtx()">End shift</button>
       <button class="mb mut" onclick="document.getElementById('end-modal').classList.remove('open')">Cancel</button>
     </div>
   </div>
@@ -836,6 +854,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <div class="toast" id="toast"><span id="toast-msg"></span><button id="toast-undo" class="toast-undo" onclick="doToastUndo()">Undo</button></div>
 <script>
 var DEF_TASK_TYPES=['Chase','Review','Procedure','Prescribing','TBAO','Imaging','Other'];
+var DEF_WAITING_ONS=['Bloods','Imaging','Callback','Reg review','Bed manager','Micro','Family'];
 var DEF_SUGS={
   chase:['Bloods','Imaging','Referral'],
   review:['Unwell','ECG','Fall','Desaturation','Fever','Chest pain','Shortness of breath'],
@@ -851,7 +870,9 @@ var S={
   filter:'all',nextId:1,userName:'',wards:[],baseWard:'',
   shiftTypes:[],taskTypes:DEF_TASK_TYPES.slice(),
   taskSugs:JSON.parse(JSON.stringify(DEF_SUGS)),
+  waitingOns:DEF_WAITING_ONS.slice(),
   activeTheme:'midnight',themeOverrides:{},setupDone:false,
+  bleepWards:{},
 };
 
 function sv(){try{localStorage.setItem('sl1',JSON.stringify(S));}catch(e){}}
@@ -866,6 +887,8 @@ function ld(){
   if(!S.taskSugs)S.taskSugs=JSON.parse(JSON.stringify(DEF_SUGS));
   if(!S.wards)S.wards=[];
   if(!S.shiftTypes)S.shiftTypes=[];
+  if(!S.bleepWards)S.bleepWards={};
+  if(!S.waitingOns)S.waitingOns=DEF_WAITING_ONS.slice();
   if(!S.nextId)S.nextId=S.tasks.length?Math.max.apply(null,S.tasks.map(function(t){return t.id;}))+1:1;
 }
 
@@ -924,8 +947,7 @@ var EMPTY_START=[
   ['\u25CB','Nothing logged yet.','Tap + to get started.']
 ];
 var EMPTY_CLEAR=[
-  ['\u2713','Slate clear.',''],
-  ['\u25A1','All done.','Enjoy it while it lasts.'],
+  ['\u2713','Slate clear.',''],  ['\u25A1','All done.','Enjoy it while it lasts.'],
   ['\u2014','Everything cleared.','Well done.'],
   ['\u25CB','Nothing left.','That\'s the shift.'],
   ['\u2713','All cleared.','Well done.'],
@@ -935,13 +957,25 @@ var EMPTY_CLEAR=[
   ['\u2014','Nothing outstanding.','Well done.'],
   ['\u2713','The slate is clear.','']
 ];
+var EMPTY_BLEEPS=[
+  ['No bleeps queued.','Enjoy the quiet while it lasts.'],
+  ['Nothing bleeping.','A rare moment of peace.'],
+  ['No bleeps yet.','Long may it continue.'],
+  ['Quiet on the bleep.','Make the most of it.'],
+  ['No bleeps waiting.','Savour it.']
+];
 
 var NAV=[
-  {id:'tasks',    l:'Tasks',    s:'screen-list',     ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>'},
-  {id:'bleeps',   l:'Bleeps',   s:'screen-bleeps',   ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>'},
-  {id:'handover', l:'Handover', s:'screen-handover', ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'},
-  {id:'shift',    l:'Shifts',   s:'screen-shift',    ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>'},
-  {id:'settings', l:'',         s:'screen-settings', ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>'},
+  {id:'tasks',    l:'Tasks',    s:'screen-list',
+    ic:'<span class="ni-out"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor"><rect x="4" y="4" width="20" height="20" rx="5.5" stroke-width="1.8"/><path d="M9 11h7M9 15h5" stroke-width="1.8" stroke-linecap="round"/><path d="M15 18l2 2 4-4.5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ni-fill"><svg viewBox="0 0 28 28" fill="none"><rect x="4" y="4" width="20" height="20" rx="5.5" fill="currentColor"/><path d="M9 11h7M9 15h5" stroke="#0f1525" stroke-width="1.8" stroke-linecap="round"/><path d="M15 18l2 2 4-4.5" stroke="#0f1525" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'},
+  {id:'bleeps',   l:'Bleeps',   s:'screen-bleeps',
+    ic:'<span class="ni-out"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor"><circle cx="14" cy="19" r="2.4" stroke-width="1.8"/><path d="M9 15.5a5 5 0 0110 0" stroke-width="1.8" stroke-linecap="round"/><path d="M5.5 12a8.5 8.5 0 0117 0" stroke-width="1.8" stroke-linecap="round" opacity=".5"/></svg></span><span class="ni-fill"><svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="19" r="2.8" fill="currentColor"/><path d="M9 15.5a5 5 0 0110 0" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M5.5 12a8.5 8.5 0 0117 0" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".45"/></svg></span>'},
+  {id:'handover', l:'Patients',  s:'screen-handover',
+    ic:'<span class="ni-out"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor"><circle cx="14" cy="10" r="4" stroke-width="1.8"/><path d="M6 23c0-4.4 3.6-7 8-7s8 2.6 8 7" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="ni-fill"><svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="10" r="4.2" fill="currentColor"/><path d="M6 23.5c0-4.7 3.6-7.5 8-7.5s8 2.8 8 7.5z" fill="currentColor"/></svg></span>'},
+  {id:'shift',    l:'Shifts',   s:'screen-shift',
+    ic:'<span class="ni-out"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor"><circle cx="14" cy="14" r="9" stroke-width="1.8"/><path d="M14 5a9 9 0 010 18z" fill="currentColor" opacity=".42"/></svg></span><span class="ni-fill"><svg viewBox="0 0 28 28" fill="none"><path d="M14 5a9 9 0 010 18z" fill="#fbbf24"/><path d="M14 5a9 9 0 000 18z" fill="currentColor"/><circle cx="14" cy="14" r="9" stroke="rgba(255,255,255,.18)" stroke-width="1"/></svg></span>'},
+  {id:'settings', l:'',         s:'screen-settings',
+    ic:'<span class="ni-out"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="14" cy="14" r="3.2"/><path d="M14 4.5v3M14 20.5v3M4.5 14h3M20.5 14h3M7.4 7.4l2.1 2.1M18.5 18.5l2.1 2.1M20.6 7.4l-2.1 2.1M9.5 18.5l-2.1 2.1" stroke-linecap="round"/></svg></span><span class="ni-fill"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="14" cy="14" r="3" fill="currentColor" stroke="none"/><path d="M14 4.5v3M14 20.5v3M4.5 14h3M20.5 14h3M7.4 7.4l2.1 2.1M18.5 18.5l2.1 2.1M20.6 7.4l-2.1 2.1M9.5 18.5l-2.1 2.1" stroke-linecap="round"/></svg></span>'},
 ];
 
 function bNavs(){
@@ -960,7 +994,7 @@ function gNav(id){
   document.querySelectorAll('.nb').forEach(function(b){b.classList.toggle('active',b.dataset.nav===id);});
   if(id==='tasks')    rList();
   if(id==='bleeps')   rBleepQ();
-  if(id==='handover') rHO();
+  if(id==='handover') rPatients();
   if(id==='shift')    rShift();
   if(id==='settings') rSettings();
 }
@@ -1099,6 +1133,9 @@ function pickType(el,v){curType=v;document.querySelectorAll('#f-type-grid .tto')
 function pickPrio(el){curPrio=el.dataset.v;document.querySelectorAll('#f-prio-grp .so').forEach(function(o){o.className='so';});el.classList.add('on-'+curPrio);}
 function pickStatus(el){curStatus=el.dataset.v;document.querySelectorAll('#f-status-grp .so').forEach(function(o){o.className='so';});el.classList.add('on-'+curStatus);document.getElementById('f-waiting-field').style.display=curStatus==='waiting'?'block':'none';}
 function setWsug(v){document.getElementById('f-waiting-on').value=v;document.getElementById('f-waiting-on').focus();}
+function renderFormWsugs(){var box=document.getElementById('f-wsug-row');if(!box)return;var list=(S.waitingOns&&S.waitingOns.length)?S.waitingOns:DEF_WAITING_ONS;box.innerHTML=list.map(function(w){return'<span class="wsug" onclick="setWsug('+JSON.stringify(w).replace(/"/g,'&quot;')+')">'+e(w)+'</span>';}).join('');}
+function setMoreDetails(open){var m=document.getElementById('f-more'),c=document.getElementById('f-more-caret');if(!m)return;m.style.display=open?'block':'none';if(c)c.textContent=open?'\u25be':'\u25b8';}
+function toggleMoreDetails(){var m=document.getElementById('f-more');setMoreDetails(m.style.display==='none');}
 
 function rCtxSeg(){
   var fld=document.getElementById('f-ctx-field');var seg=document.getElementById('f-ctx-seg');
@@ -1134,6 +1171,7 @@ function rsForm(keepPatient){
   document.querySelector('#f-prio-grp [data-v="routine"]').classList.add('on-routine');
   document.querySelectorAll('#f-status-grp .so').forEach(function(o){o.className='so';});
   document.querySelector('#f-status-grp [data-v="pending"]').classList.add('on-pending');
+  renderFormWsugs();setMoreDetails(false);
   rCtxSeg();bWardDrop();bTypeGrid();
 }
 
@@ -1316,6 +1354,7 @@ function rShiftBars(){
 
 function rList(){
   rShiftBars();
+  if(S.contexts.length){var first=S.contexts[0].id;S.tasks.forEach(function(t){if(t.carry){t.ctxId=first;t.carry=false;}});}
   var all=allActiveTasks();
   var pend=all.filter(function(t){return t.status==='pending';}).length;
   var wait=all.filter(function(t){return t.status==='waiting';}).length;
@@ -1354,7 +1393,7 @@ function bCtxSec(ctx){
   else if(S.filter==='waiting')filt=tasks.filter(function(t){return t.status==='waiting';});
   else if(S.filter==='done')filt=tasks.filter(function(t){return t.status==='done';});
   var html='<div class="ctx-sec">';
-  html+='<div class="ctx-hdr"><div class="ctx-hdr-top"><span class="ctx-name">'+e(ctx.label)+'</span><span class="ctx-wards">'+ctx.wards.map(function(w){return e(w);}).join(', ')+'</span></div></div>';
+  html+='<div class="ctx-hdr"><div class="ctx-hdr-top"><span class="live-dot" style="margin-right:7px;"></span><span class="ctx-name">'+e(ctx.label)+'</span><span class="ctx-wards">'+ctx.wards.map(function(w){return e(w);}).join(', ')+'</span></div></div>';
   if(!tasks.length){html+='<div style="font-size:13px;color:var(--text3);padding:8px 2px 4px;">Nothing on the slate for this shift.</div></div>';return html;}
   if(!filt.length){html+='<div style="font-size:13px;color:var(--text3);padding:8px 2px 4px;">Nothing matching this filter.</div></div>';return html;}
   var urg=[];
@@ -1447,6 +1486,7 @@ function bTask(t,showWard,inGroup){
   var notesHTML=t.notes?('<div class="tnotes">'+e(t.notes)+'</div>'):'';
   return '<div class="twrap" id="tw'+t.id+'">'
     +'<div class="tswbg"><span class="tswic">\u2713 Done</span></div>'
+    +'<div class="tswbg-wait"><span class="tswic-wait">\u21BB Waiting</span></div>'
     +'<div class="'+tCls+'" id="ta'+t.id+'"'
     +' onclick="oTM('+t.id+')"'
     +' ontouchstart="swSt(event,'+t.id+')"'
@@ -1454,7 +1494,7 @@ function bTask(t,showWard,inGroup){
     +' ontouchend="swEn(event,'+t.id+')">'
     +'<div class="tchk"></div>'
     +'<div class="tbody"><div class="tmeta">'+wardHTML+bedHTML+initHTML
-    +'<span class="ttype">'+e(t.type).toUpperCase()+'</span>'
+    +'<span class="ttype tt-'+e(t.type).toLowerCase()+'">'+e(t.type).toUpperCase()+'</span>'
     +'<span class="ttime">'+fmtTime(t.created)+'</span>'
     +'</div>'
     +'<div class="tname">'+e(t.desc)+'</div>'
@@ -1463,21 +1503,39 @@ function bTask(t,showWard,inGroup){
 }
 
 var SW={};
-function swSt(ev,id){var t=ev.touches[0];SW[id]={x:t.clientX,y:t.clientY,g:false,d:false};}
+function swSt(ev,id){var t=ev.touches[0];SW[id]={x:t.clientX,y:t.clientY,g:false,d:false,dir:0};}
 function swMv(ev,id){
   var s=SW[id];if(!s)return;var t=ev.touches[0];var dx=t.clientX-s.x,dy=Math.abs(t.clientY-s.y);
-  if(dy>20&&!s.g)return;if(dx>10)s.g=true;if(!s.g)return;ev.preventDefault();
-  var w=document.getElementById('tw'+id);if(w)w.classList.add('swiping');
+  if(dy>20&&!s.g)return;if(Math.abs(dx)>10)s.g=true;if(!s.g)return;ev.preventDefault();
+  var w=document.getElementById('tw'+id);
   var el=document.getElementById('ta'+id);if(!el)return;
-  var c=Math.max(0,Math.min(dx,100));el.style.transform='translateX('+c+'px)';
-  if(c>60&&!s.d){s.d=true;el.style.transition='transform .2s';el.style.transform='translateX(110%)';setTimeout(function(){swDone(id);},180);}
+  if(dx>=0){ // right = done
+    if(w){w.classList.add('swiping');w.classList.remove('swiping-l');}
+    var c=Math.max(0,Math.min(dx,100));el.style.transform='translateX('+c+'px)';
+    if(c>60&&!s.d){s.d=true;s.dir=1;el.style.transition='transform .2s';el.style.transform='translateX(110%)';setTimeout(function(){swDone(id);},180);}
+  } else { // left = waiting
+    if(w){w.classList.add('swiping-l');w.classList.remove('swiping');}
+    var cl=Math.max(0,Math.min(-dx,100));el.style.transform='translateX('+(-cl)+'px)';
+    if(cl>60&&!s.d){s.d=true;s.dir=-1;el.style.transition='transform .2s';el.style.transform='translateX(0)';setTimeout(function(){swWaiting(id);},150);}
+  }
 }
-function swEn(ev,id){var s=SW[id];var w=document.getElementById('tw'+id);if(w)w.classList.remove('swiping');if(!s||s.d)return;var el=document.getElementById('ta'+id);if(el)el.style.transform='';delete SW[id];}
+function swEn(ev,id){var s=SW[id];var w=document.getElementById('tw'+id);if(w){w.classList.remove('swiping');w.classList.remove('swiping-l');}if(!s||s.d)return;var el=document.getElementById('ta'+id);if(el)el.style.transform='';delete SW[id];}
 function swDone(id){
   var t=S.tasks.find(function(t){return t.id===id;});
   if(t){var prev=t.status,prevDone=t.done;t.status='done';t.done=true;S.swipeHintSeen=true;sv();rList();hap(15);
     toast(pick(TOAST_DONE),function(){var tt=S.tasks.find(function(x){return x.id===id;});if(tt){tt.status=prev;tt.done=prevDone;sv();rList();}});
   }else{S.swipeHintSeen=true;sv();rList();}
+}
+function swWaiting(id){
+  var t=S.tasks.find(function(t){return t.id===id;});if(!t){return;}
+  delete SW[id];
+  if(t.status==='waiting'){var el=document.getElementById('ta'+id);if(el)el.style.transform='';rList();return;}
+  t.status='waiting';t.done=false;if(!t.waitingSince)t.waitingSince=Date.now();S.swipeHintSeen=true;sv();rList();hap(15);
+  mId=id;
+  document.getElementById('wo-inp').value=t.waitingOn||'';
+  renderWoSugs();
+  document.getElementById('wo-modal').classList.add('open');
+  setTimeout(function(){document.getElementById('wo-inp').focus();},300);
 }
 // TASK MODAL
 var mId=null;
@@ -1485,21 +1543,21 @@ function oTM(id){
   var t=S.tasks.find(function(t){return t.id===id;});if(!t)return;
   mId=id;
   document.getElementById('tm-title').textContent=t.desc;
-  document.getElementById('tm-ward').textContent=t.ward;
-  document.getElementById('tm-bed').textContent=t.initials?t.bed+' \u00b7 '+t.initials:t.bed;
-  var ir=document.getElementById('tm-id-row');ir.style.display=t.hosid?'block':'none';if(t.hosid)document.getElementById('tm-hosid').textContent=t.hosid;
-  document.getElementById('tm-type').textContent=cap(t.type);
-  document.getElementById('tm-prio').textContent=cap(t.prio);
-  document.getElementById('tm-time').textContent=fmtTime(t.created);
+  var loc=e(t.ward||'')+(t.bed?' \u00b7 Bed '+e(t.bed):'')+(t.initials?' \u00b7 '+e(t.initials):'')+(t.hosid?' \u00b7 '+e(t.hosid):'');
+  document.getElementById('tm-metaline').innerHTML=loc+' &nbsp;\u00b7&nbsp; '+cap(t.type)+' \u00b7 '+cap(t.prio)+' \u00b7 '+fmtTime(t.created);
   var wr=document.getElementById('tm-wait-row');wr.style.display=t.waitingOn?'block':'none';if(t.waitingOn)document.getElementById('tm-wait').textContent=t.waitingOn;
   var er=document.getElementById('tm-esc-row');er.style.display=t.escalation?'block':'none';if(t.escalation)document.getElementById('tm-esc').textContent=t.escalation;
   var nr=document.getElementById('tm-notes-row');nr.style.display=t.notes?'block':'none';if(t.notes)document.getElementById('tm-notes').textContent=t.notes;
-  document.getElementById('tm-done-btn').style.display=t.status==='done'?'none':'block';
-  document.getElementById('tm-wait-btn').style.display=t.status==='waiting'?'none':'block';
-  document.getElementById('tm-pending-btn').style.display=t.status==='pending'?'none':'block';
+  // segmented status active states
+  var segs={pending:{bg:'rgba(251,191,36,.18)',fg:'#fbd77a'},waiting:{bg:'rgba(129,140,248,.18)',fg:'#a5b0f5'},done:{bg:'rgba(52,211,153,.18)',fg:'#7ed3a6'}};
+  ['pending','waiting','done'].forEach(function(s){
+    var el=document.getElementById('tm-seg-'+s);if(!el)return;
+    if(t.status===s){el.style.background=segs[s].bg;el.style.color=segs[s].fg;el.style.fontWeight='600';}
+    else{el.style.background='transparent';el.style.color='var(--text2)';el.style.fontWeight='500';}
+  });
   var hb=document.getElementById('tm-ho-btn');
   var added=S.hoEntries&&S.hoEntries.some(function(en){return en.ward===t.ward&&en.bed===t.bed;});
-  hb.textContent=added?'Already in handover':'Add to handover';
+  hb.textContent=added?'In handover':'Add to handover';
   hb.className=added?'mb ho-btn added':'mb ho-btn';
   document.getElementById('task-modal').classList.add('open');
 }
@@ -1513,6 +1571,7 @@ function tmStatus(st){
     if(!t.waitingSince)t.waitingSince=Date.now();
     sv();rList();
     document.getElementById('wo-inp').value=t.waitingOn||'';
+    renderWoSugs();
     document.getElementById('wo-modal').classList.add('open');
     setTimeout(function(){document.getElementById('wo-inp').focus();},300);
     return;
@@ -1547,6 +1606,7 @@ function tmEdit(){
   document.querySelector('#f-prio-grp [data-v="'+t.prio+'"]').classList.add('on-'+t.prio);
   document.querySelectorAll('#f-status-grp .so').forEach(function(o){o.className='so';});
   document.querySelector('#f-status-grp [data-v="'+curStatus+'"]').classList.add('on-'+curStatus);
+  renderFormWsugs();setMoreDetails(true);
   bTypeGrid();showScreen('screen-add');
 }
 
@@ -1564,6 +1624,7 @@ function tmAddToHO(){
 }
 
 // WAITING-ON PROMPT
+function renderWoSugs(){var box=document.getElementById('wo-sugs-box');if(!box)return;var list=(S.waitingOns&&S.waitingOns.length)?S.waitingOns:DEF_WAITING_ONS;box.innerHTML=list.map(function(w){return'<span class="wo-sug" onclick="setWO('+JSON.stringify(w).replace(/"/g,'&quot;')+')">'+e(w)+'</span>';}).join('');}
 function setWO(v){document.getElementById('wo-inp').value=v;document.getElementById('wo-inp').focus();}
 function confirmWO(){
   var val=document.getElementById('wo-inp').value.trim();
@@ -1635,11 +1696,11 @@ function addBleep(){
   var num=document.getElementById('bq-num').value.trim();if(!num){toast('Enter a bleep number');document.getElementById('bq-num').focus();return;}
   var notes=document.getElementById('bq-notes').value.trim();
   if(!S.bleeps)S.bleeps=[];
-  S.bleeps.push({id:Date.now(),num:num,notes:notes,added:Date.now()});
+  S.bleeps.push({id:Date.now(),num:num,notes:notes,added:Date.now(),ward:(S.bleepWards&&S.bleepWards[num])||''});
   var tgt=ocCtx()||wardCtx();if(tgt)tgt.bleepCount=(tgt.bleepCount||0)+1;
   document.getElementById('bq-num').value='';document.getElementById('bq-notes').value='';
   sv();rBleepQ();updateBleepBadge();document.getElementById('bq-num').focus();
-  toast(pick(TOAST_BLEEP_ADDED));
+  hap(12);toast(pick(TOAST_BLEEP_ADDED));
 }
 function clrBleep(id){if(!S.bleeps)return;S.bleeps=S.bleeps.filter(function(b){return b.id!==id;});sv();rBleepQ();updateBleepBadge();toast(pick(TOAST_BLEEP_CLEARED));}
 function logBleepAsTask(id){
@@ -1650,15 +1711,80 @@ function timeAgo(ts){var m=Math.floor((Date.now()-ts)/60000);if(m<1)return'just 
 function rBleepQ(){
   if(!S.bleeps)S.bleeps=[];updateBleepBadge();
   var el=document.getElementById('bq-list');if(!el)return;
-  if(!S.bleeps.length){el.innerHTML='<div class="bq-empty">&#128223;<br><br>No bleeps queued.</div>';return;}
+  if(!S.bleeps.length){var eb=pick(EMPTY_BLEEPS);el.innerHTML='<div class="empty" style="padding:52px 24px;"><div class="empty-ic">\u25CB</div><p style="color:var(--text);font-size:15px;margin-bottom:4px;">'+eb[0]+'</p><p style="font-size:13px;color:var(--text3);">'+eb[1]+'</p></div>';return;}
   el.innerHTML=S.bleeps.map(function(b){
+    var wardLine;
+    if(b.ward){
+      wardLine='<div style="display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-family:\'Martian Mono\',monospace;font-size:10px;color:#5eb88a;font-weight:500;"><span style="width:5px;height:5px;border-radius:50%;background:#5eb88a;"></span>'+e(b.ward)+'</div>';
+    } else if(b._tagging){
+      wardLine='<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;">'
+        +(S.wards||[]).map(function(w){return'<span onclick="setBleepWard('+b.id+',\''+e(w).replace(/\x27/g,"")+'\')" style="font-size:11px;padding:4px 10px;border-radius:16px;border:1px solid rgba(94,184,138,.35);background:rgba(94,184,138,.1);color:#5eb88a;cursor:pointer;">'+e(w)+'</span>';}).join('')
+        +'<span onclick="setBleepWard('+b.id+',\'\')" style="font-size:11px;padding:4px 10px;border-radius:16px;border:1px dashed var(--border2);color:var(--text3);cursor:pointer;">none</span></div>';
+    } else {
+      wardLine='<div onclick="startTagBleep('+b.id+')" style="display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-family:\'Martian Mono\',monospace;font-size:10px;color:var(--text3);border:1px dashed var(--border2);border-radius:5px;padding:1px 7px;cursor:pointer;">+ ward</div>';
+    }
     return '<div class="bq-item">'
-      +'<div class="bq-num">'+e(b.num)+'</div>'
+      +'<div style="min-width:64px;flex-shrink:0;"><div class="bq-num">'+e(b.num)+'</div>'+wardLine+'</div>'
       +'<div class="bq-info">'+(b.notes?'<div class="bq-notes-txt">'+e(b.notes)+'</div>':'')+'<div class="bq-time">'+fmtTime(b.added)+' \u00b7 '+timeAgo(b.added)+'</div></div>'
       +'<div class="bq-btns"><button class="bq-btn log" onclick="logBleepAsTask('+b.id+')">Log</button><button class="bq-btn clr" onclick="clrBleep('+b.id+')">Clear</button></div>'
       +'</div>';
   }).join('');
 }
+function startTagBleep(id){var b=S.bleeps.find(function(x){return x.id===id;});if(b){b._tagging=true;rBleepQ();}}
+function setBleepWard(id,ward){var b=S.bleeps.find(function(x){return x.id===id;});if(!b)return;b.ward=ward;b._tagging=false;if(ward){if(!S.bleepWards)S.bleepWards={};S.bleepWards[b.num]=ward;}sv();rBleepQ();}
+
+// PATIENTS (Aware + Handover out)
+var patientsView='aware';
+function switchPatientsView(v){
+  patientsView=v;
+  document.getElementById('aware-scr').style.display=v==='aware'?'block':'none';
+  document.getElementById('ho-scr').style.display=v==='ho'?'block':'none';
+  var a=document.getElementById('pv-aware'),h=document.getElementById('pv-ho');
+  if(a){a.style.background=v==='aware'?'rgba(167,139,250,.14)':'transparent';a.style.color=v==='aware'?'#a78bfa':'var(--text3)';a.style.fontWeight=v==='aware'?'600':'500';}
+  if(h){h.style.background=v==='ho'?'rgba(167,139,250,.14)':'transparent';h.style.color=v==='ho'?'#a78bfa':'var(--text3)';h.style.fontWeight=v==='ho'?'600':'500';}
+  var cnt=document.getElementById('ho-count');
+  if(cnt){var n=(S.hoEntries||[]).length;var ready=(S.hoEntries||[]).filter(function(en){return en.situation&&en.situation.trim();}).length;cnt.textContent=n?(n+' patient'+(n!==1?'s':'')+(v==='aware'?' \u00b7 '+ready+' ready':'')):'';}
+}
+function rPatients(){
+  if(!S.hoEntries)S.hoEntries=[];
+  rAware();rHO();
+  switchPatientsView(patientsView);
+}
+function rAware(){
+  var el=document.getElementById('aware-scr');if(!el)return;
+  var entries=S.hoEntries.slice();
+  var ready=entries.filter(function(en){return en.situation&&en.situation.trim();}).length;
+  var cnt=document.getElementById('ho-count');if(cnt)cnt.textContent=entries.length?(entries.length+' patient'+(entries.length!==1?'s':'')+(patientsView==='aware'?' \u00b7 '+ready+' ready':'')):'';
+  if(!entries.length){
+    el.innerHTML='<div class="empty" style="padding:48px 24px;"><div class="empty-ic">\u25CB</div><p>No one to hold yet.<br>Patients you receive at handover appear here.</p></div>';
+    return;
+  }
+  // group by ward in ward order
+  var wardOrder=[];S.contexts.forEach(function(c){c.wards.forEach(function(w){if(wardOrder.indexOf(w)===-1)wardOrder.push(w);});});
+  entries.sort(function(a,b){
+    var wi=wardOrder.indexOf(a.ward),wj=wardOrder.indexOf(b.ward);
+    var wo=(wi===-1?999:wi)-(wj===-1?999:wj);if(wo!==0)return wo;
+    var an=parseInt((a.bed||'').replace(/\D/g,''),10),bn=parseInt((b.bed||'').replace(/\D/g,''),10);
+    if(!isNaN(an)&&!isNaN(bn))return an-bn;return(a.bed||'').localeCompare(b.bed||'');
+  });
+  var html='';var lastWard=null;
+  entries.forEach(function(en){
+    var idx=S.hoEntries.indexOf(en);
+    if(en.ward!==lastWard){lastWard=en.ward;html+='<div style="display:flex;align-items:center;gap:8px;margin:14px 0 9px;"><span style="font-family:\'Martian Mono\',monospace;font-size:11px;color:#9aa6be;text-transform:uppercase;letter-spacing:.1em;">'+e(en.ward||'\u2014')+'</span><span style="flex:1;height:1px;background:var(--border);"></span></div>';}
+    var hasSit=en.situation&&en.situation.trim();
+    var jobs=(en.jobs||[]).filter(Boolean);
+    var who=(en.bed?'Bed '+e(en.bed):'')+(en.initials?' \u00b7 '+e(en.initials):'')||e(en.name)||'Patient';
+    var tagR=en.resus==='not'?'<span style="font-family:\'Martian Mono\',monospace;font-size:10px;color:var(--urgent);">DNACPR</span>':'';
+    html+='<div onclick="awareEdit('+idx+')" style="position:relative;padding:11px 13px 11px 15px;border-radius:9px;background:rgba(167,139,250,.06);border:1px solid '+(hasSit?'rgba(167,139,250,.16)':'rgba(251,191,36,.22)')+';margin-bottom:6px;cursor:pointer;">'
+      +'<div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:'+(hasSit?'#a78bfa':'#fbbf24')+';border-radius:3px 0 0 3px;"></div>'
+      +'<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px;"><span style="font-size:13px;color:var(--text);font-weight:600;">'+who+'</span>'+tagR+'</div>'
+      +(hasSit?'<div style="font-size:13.5px;color:#c3ccdc;line-height:1.45;">'+e(en.situation)+'</div>':'<div style="font-size:13px;color:#fbbf24;font-style:italic;">No situation written \u2014 tap to add</div>')
+      +(jobs.length?'<div style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:4px 10px;border-radius:16px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.22);"><span style="width:5px;height:5px;border-radius:50%;background:var(--routine);"></span><span style="font-size:11px;color:var(--routine);font-weight:500;">'+jobs.length+' job'+(jobs.length!==1?'s':'')+'</span></div>':'')
+      +'</div>';
+  });
+  el.innerHTML=html;
+}
+function awareEdit(idx){switchPatientsView('ho');var en=S.hoEntries[idx];if(en){en._exp=true;rHO();}}
 
 // HANDOVER
 function rHO(){
@@ -1687,8 +1813,9 @@ function bHoEntry(en,i){
   var jc=(en.jobs||[]).length;
   var nameLine=e(en.name)||'<span style="color:var(--text3)">No name</span>';
   var locLine=e(en.ward||'')+(en.bed?' \u00b7 Bed '+e(en.bed):'')+(en.hosid?' \u00b7 '+e(en.hosid):'');
-  if(!exp){return'<div class="ho-entry" id="hoe'+i+'"><div class="ho-ehdr" onclick="togHoE('+i+')">'
-    +'<div style="flex:1;"><div class="ho-ename">'+nameLine+'</div><div class="ho-eloc">'+locLine+' \u00b7 '+e(ceilL[en.ceiling]||'No ceiling')+' \u00b7 '+e(resL[en.resus]||'For resus')+(jc?' \u00b7 '+jc+' job'+(jc!==1?'s':''):'')+'</div></div>'
+  if(!exp){var rdy=en.situation&&en.situation.trim();return'<div class="ho-entry" id="hoe'+i+'"><div class="ho-ehdr" onclick="togHoE('+i+')">'
+    +'<span style="width:8px;height:8px;border-radius:50%;background:'+(rdy?'#34d399':'#fbbf24')+';flex-shrink:0;margin-right:4px;"></span>'
+    +'<div style="flex:1;"><div class="ho-ename">'+nameLine+'</div><div class="ho-eloc">'+(rdy?(locLine+' \u00b7 '+e(resL[en.resus]||'For resus')+(jc?' \u00b7 '+jc+' job'+(jc!==1?'s':''):'')):'<span style="color:#fbbf24;">No situation written</span>')+'</div></div>'
     +'<span style="color:var(--text3);font-size:13px;margin-right:8px;">\u25B6</span>'
     +'<span class="ho-edel" onclick="event.stopPropagation();showConf(\'delHo_'+i+'\',\'Remove this entry?\',\'\',\'Remove\')">\u00d7</span>'
     +'</div></div>';}
@@ -1775,7 +1902,7 @@ function rShift(){
     var pend=tasks.filter(function(t){return t.status==='pending';}).length;
     var done=tasks.filter(function(t){return t.status==='done';}).length;
     html+='<div class="actx">'
-      +'<div class="actx-top"><span class="actx-name">'+e(ctx.label)+'</span><span style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text3);">'+e(ctx.startTime)+'\u2013'+e(ctx.endTime)+'</span></div>'
+      +'<div class="actx-top"><span class="actx-name">'+e(ctx.label)+'</span><span style="font-family:\'Martian Mono\',monospace;font-size:11px;color:var(--text3);">'+e(ctx.startTime)+'\u2013'+e(ctx.endTime)+'</span></div>'
       +'<div class="actx-wards">'+ctx.wards.map(function(w){return e(w);}).join(', ')+'</div>'
       +'<div class="actx-stats"><span class="actx-stat"><b>'+pend+'</b> pending</span><span class="actx-stat"><b>'+done+'</b> done</span><span class="actx-stat"><b>'+(ctx.bleepCount||0)+'</b> bleeps</span></div>'
       +'<button class="end-ctx-btn" onclick="showEndCtx('+ctx.id+')">End '+e(ctxKindLabel(ctx.kind).toLowerCase())+'</button>'
@@ -1835,10 +1962,11 @@ function showEndCtx(id){
   var pending=tasks.filter(function(t){return t.status==='pending';}).length;
   var waiting=tasks.filter(function(t){return t.status==='waiting';}).length;
   var done=tasks.filter(function(t){return t.status==='done';}).length;
-  var out=pending+waiting;
-  var warning=out>0?('<div style="background:var(--urgent-dim);border:1px solid var(--urgent-line);border-radius:var(--rs);padding:10px 12px;font-size:13px;color:var(--urgent);margin-bottom:12px;">\u26A0 '+out+' task'+(out!==1?'s':'')+' still outstanding</div>'):'';
-  document.getElementById('end-title').textContent='End '+ctxKindLabel(ctx.kind).toLowerCase()+'?';
-  document.getElementById('end-summary').innerHTML=warning
+  var outTasks=tasks.filter(function(t){return t.status!=='done';});
+  var out=outTasks.length;
+  endFates={};
+  document.getElementById('end-title').textContent=out>0?('Ending '+ctxKindLabel(ctx.kind).toLowerCase()):('End '+ctxKindLabel(ctx.kind).toLowerCase()+'?');
+  document.getElementById('end-summary').innerHTML=''
     +'<div class="end-summary-title">'+e(ctx.label)+' \u00b7 '+e(ctx.date)+'</div>'
     +'<div class="end-stat-row">'
     +'<div class="end-stat"><div class="end-stat-n" style="color:var(--low);">'+done+'</div><div class="end-stat-l">Done</div></div>'
@@ -1846,7 +1974,41 @@ function showEndCtx(id){
     +'<div class="end-stat"><div class="end-stat-n" style="color:var(--wc);">'+waiting+'</div><div class="end-stat-l">Waiting</div></div>'
     +'<div class="end-stat"><div class="end-stat-n" style="color:#a78bfa;">'+(ctx.bleepCount||0)+'</div><div class="end-stat-l">Bleeps</div></div>'
     +'</div>';
+  renderEndTriage(outTasks);
   document.getElementById('end-modal').classList.add('open');
+}
+var endFates={};
+function renderEndTriage(outTasks){
+  var box=document.getElementById('end-triage');
+  if(!outTasks.length){box.innerHTML='';updateEndBtn(0);return;}
+  var intro='<div style="font-size:13px;color:var(--text2);line-height:1.5;margin:4px 0 12px;">'+outTasks.length+' job'+(outTasks.length!==1?'s':'')+' aren\u2019t finished. Decide what happens to each \u2014 nothing leaves without you.</div>';
+  var rows=outTasks.map(function(t){
+    var fate=endFates[t.id]||'';
+    function btn(val,label,onColor){
+      var on=fate===val;
+      var style=on?('background:'+onColor.bg+';border:1px solid '+onColor.bd+';color:'+onColor.fg+';'):'background:var(--s2);border:1px solid var(--border2);color:var(--text2);';
+      return'<div onclick="setEndFate('+t.id+',\''+val+'\')" style="flex:1;text-align:center;padding:7px 0;border-radius:7px;font-size:11.5px;font-weight:'+(on?'600':'500')+';cursor:pointer;'+style+'">'+label+'</div>';
+    }
+    var stCol=t.status==='waiting'?'var(--wc)':'var(--routine)';
+    return'<div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:11px 12px;margin-bottom:8px;">'
+      +'<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px;"><span style="font-family:\'Martian Mono\',monospace;font-size:10px;color:'+stCol+';text-transform:uppercase;letter-spacing:.06em;">'+cap(t.status)+'</span><span style="font-family:\'Martian Mono\',monospace;font-size:10px;color:var(--text3);">'+e(t.ward||'')+(t.bed?' \u00b7 '+e(t.bed):'')+'</span></div>'
+      +'<div style="font-size:14px;color:var(--text);font-weight:500;margin-bottom:9px;">'+e(t.desc)+'</div>'
+      +'<div style="display:flex;gap:6px;">'
+      +btn('handover','\u2192 Handover',{bg:'rgba(167,139,250,.16)',bd:'rgba(167,139,250,.4)',fg:'#c4b5fd'})
+      +btn('mine','Still mine',{bg:'rgba(94,184,138,.14)',bd:'rgba(94,184,138,.4)',fg:'#7ed3a6'})
+      +btn('drop','Drop',{bg:'rgba(255,255,255,.08)',bd:'rgba(255,255,255,.16)',fg:'var(--text2)'})
+      +'</div></div>';
+  }).join('');
+  box.innerHTML=intro+rows;
+  updateEndBtn(outTasks.length);
+}
+function setEndFate(id,val){endFates[id]=val;var ctx=ctxById(endingCtxId);if(ctx)renderEndTriage(ctxTasks(ctx.id).filter(function(t){return t.status!=='done';}));}
+function updateEndBtn(nOut){
+  var btn=document.getElementById('end-confirm-btn');if(!btn)return;
+  var decided=Object.keys(endFates).filter(function(k){return endFates[k];}).length;
+  var ready=nOut===0||decided>=nOut;
+  btn.style.opacity=ready?'1':'.45';btn.style.pointerEvents=ready?'auto':'none';
+  btn.textContent=nOut>0?(ready?'End shift':'Decide all '+nOut+' first'):'End shift';
 }
 
 function confirmEndCtx(){
@@ -1857,11 +2019,27 @@ function confirmEndCtx(){
   var durationH=(Date.now()-ctx.started)/3600000;
   var bph=durationH>0?bleeps/durationH:0;
   S.shiftLog.unshift({id:ctx.id,kind:ctx.kind,label:ctx.label,wards:ctx.wards.slice(),date:ctx.date,total:tasks.length,doneCount:done,bleeps:bleeps,ended:Date.now()});
+  // apply triage fates to outstanding tasks
+  var otherCtx=S.contexts.filter(function(c){return c.id!==ctx.id;});
+  tasks.forEach(function(t){
+    if(t.status==='done')return;
+    var fate=endFates[t.id];
+    if(fate==='handover'){
+      var already=S.hoEntries.some(function(en){return en.ward===t.ward&&en.bed===t.bed;});
+      if(!already){S.hoEntries.push({ward:t.ward,bed:t.bed,initials:t.initials||'',hosid:t.hosid||'',name:'',admission:'',ceiling:'none',resus:'for',situation:'',jobs:[t.type.toUpperCase()+': '+t.desc+(t.waitingOn?' [waiting: '+t.waitingOn+']':'')],instructions:'',_exp:false,_jobsExp:false});}
+      else{var en=S.hoEntries.find(function(x){return x.ward===t.ward&&x.bed===t.bed;});if(en){if(!en.jobs)en.jobs=[];en.jobs.push(t.type.toUpperCase()+': '+t.desc);}}
+    } else if(fate==='mine'){
+      if(otherCtx.length){t.ctxId=otherCtx[0].id;}else{t.carry=true;t.ctxId=-1;}
+    }
+    // drop or default: removed below
+  });
+  // keep carried tasks; remove the rest belonging to this ctx
   S.tasks=S.tasks.filter(function(t){return t.ctxId!==ctx.id;});
   S.contexts=S.contexts.filter(function(c){return c.id!==ctx.id;});
-  if(!S.contexts.length){S.bleeps=[];S.hoEntries=[];}
+  if(!S.contexts.length){S.bleeps=[];}
+  endFates={};
   sv();document.getElementById('end-modal').classList.remove('open');
-  toast(goodbye(bph));
+  hap(25);toast(goodbye(bph));
   if(S.contexts.length){gNav('tasks');}else{showHome();}
 }
 function cEndModal(ev){if(ev.target===document.getElementById('end-modal'))document.getElementById('end-modal').classList.remove('open');}
@@ -1889,18 +2067,40 @@ function sigLabel(kind,wards){
 function rAnalytics(){
   var el=document.getElementById('ana-section');
   if(!S.shiftLog||!S.shiftLog.length){el.innerHTML='<div style="font-size:13px;color:var(--text3);padding:4px 0 12px;">No completed shifts yet. Analytics build up as you end shifts.</div>';return;}
-  var kinds={ward:{n:0,t:0,b:0},cover:{n:0,t:0,b:0},take:{n:0,t:0,b:0}};
-  S.shiftLog.forEach(function(s){var k=kinds[s.kind]||kinds.cover;k.n++;k.t+=s.total;k.b+=(s.bleeps||0);});
-  var labels={ward:'Ward day',cover:'Cover',take:'Take'};
-  var html='<div style="margin-bottom:14px;">';
-  ['ward','cover','take'].forEach(function(k){var d=kinds[k];if(!d.n)return;html+='<div class="ana-head"><div class="ana-head-name">'+labels[k]+'</div><div class="ana-head-sub">avg '+(Math.round(d.t/d.n*10)/10)+' tasks \u00b7 '+(Math.round(d.b/d.n*10)/10)+' bleeps \u00b7 '+d.n+' shift'+(d.n!==1?'s':'')+'</div></div>';});
-  html+='</div>';
+  var totalJobs=0,totalBleeps=0;
+  S.shiftLog.forEach(function(s){totalJobs+=(s.total||0);totalBleeps+=(s.bleeps||0);});
+  var nShifts=S.shiftLog.length;
+  var sinceD=S.shiftLog[S.shiftLog.length-1].date||'';
+  var sinceM=sinceD?new Date(sinceD).toLocaleDateString('en-GB',{month:'short'}):'';
+  var html=''
+    +'<div style="display:flex;gap:12px;margin-bottom:16px;">'
+    +'<div style="flex:1;background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px 15px;"><div class="serif-wm" style="font-size:42px;color:var(--text);line-height:1;margin-bottom:4px;">'+totalJobs+'</div><div style="font-family:\'Martian Mono\',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;">jobs cleared</div></div>'
+    +'<div style="flex:1;background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px 15px;"><div class="serif-wm" style="font-size:42px;color:var(--text);line-height:1;margin-bottom:4px;position:relative;display:inline-block;">'+totalBleeps+'<span style="position:absolute;top:4px;right:-9px;width:6px;height:6px;border-radius:50%;background:var(--dot);"></span></div><div style="font-family:\'Martian Mono\',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;">bleeps taken</div></div>'
+    +'</div>'
+    +'<div style="font-family:\'Martian Mono\',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:18px;">across '+nShifts+' shift'+(nShifts!==1?'s':'')+(sinceM?' \u00b7 since '+sinceM:'')+'</div>';
+  // by shift pattern (averages, split bars)
   var sigs={};
   S.shiftLog.forEach(function(s){var key=s.kind+'|'+s.wards.slice().sort().join(',');if(!sigs[key])sigs[key]={kind:s.kind,wards:s.wards.slice(),n:0,t:0,b:0};sigs[key].n++;sigs[key].t+=s.total;sigs[key].b+=(s.bleeps||0);});
   var rows=Object.keys(sigs).map(function(k){return sigs[k];});
-  rows.sort(function(a,b){return(b.t+b.b)/b.n-(a.t+a.b)/a.n;});
-  html+='<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">By shift pattern</div>';
-  rows.forEach(function(r){var avg=Math.round((r.t+r.b)/r.n*10)/10;html+='<div class="ana-row"><div class="ana-row-info"><div class="ana-row-name">'+e(sigLabel(r.kind,r.wards))+'</div><div class="ana-row-sub">'+r.n+' shift'+(r.n!==1?'s':'')+' \u00b7 avg '+(Math.round(r.t/r.n*10)/10)+' tasks \u00b7 '+(Math.round(r.b/r.n*10)/10)+' bleeps</div></div><div class="ana-row-n">'+avg+'</div></div>';});
+  rows.forEach(function(r){r.aj=r.t/r.n;r.ab=r.b/r.n;});
+  var maxAvg=Math.max.apply(null,rows.map(function(r){return r.aj+r.ab;}).concat([1]));
+  rows.sort(function(a,b){return(b.aj+b.ab)-(a.aj+a.ab);});
+  html+='<div style="font-family:\'Martian Mono\',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">Average by shift pattern</div>';
+  rows.forEach(function(r){
+    var aj=Math.round(r.aj*10)/10,ab=Math.round(r.ab*10)/10;
+    var jp=(r.aj/maxAvg)*100,bp=(r.ab/maxAvg)*100;
+    html+='<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:13px;color:var(--text);">'+e(sigLabel(r.kind,r.wards))+'</span><span style="font-family:\'Martian Mono\',monospace;font-size:10px;color:var(--text2);">avg '+aj+' job'+(aj!==1?'s':'')+' \u00b7 '+ab+' bleep'+(ab!==1?'s':'')+'</span></div>'
+      +'<div style="height:6px;border-radius:3px;background:var(--s2);overflow:hidden;display:flex;"><div style="width:'+jp+'%;height:100%;background:linear-gradient(to right,#5b62e8,#7b82f0);"></div><div style="width:'+bp+'%;height:100%;background:var(--dot);opacity:.7;"></div></div></div>';
+  });
+  html+='<div style="display:flex;align-items:center;gap:14px;margin:14px 0 22px;">'
+    +'<span style="display:flex;align-items:center;gap:5px;font-family:\'Martian Mono\',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;"><span style="width:8px;height:8px;border-radius:2px;background:#5b62e8;"></span>Jobs</span>'
+    +'<span style="display:flex;align-items:center;gap:5px;font-family:\'Martian Mono\',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;"><span style="width:8px;height:8px;border-radius:2px;background:var(--dot);opacity:.7;"></span>Bleeps</span></div>';
+  // all shifts list
+  html+='<div style="font-family:\'Martian Mono\',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">All shifts \u00b7 '+nShifts+'</div>';
+  S.shiftLog.forEach(function(s){
+    var d=s.date?new Date(s.date).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);"><div><div style="font-size:13px;color:var(--text);">'+e(s.label)+'</div><div style="font-family:\'Martian Mono\',monospace;font-size:9px;color:var(--text3);">'+d+(s.wards&&s.wards.length?' \u00b7 '+s.wards.map(function(w){return e(w);}).join(', '):'')+'</div></div><div style="font-family:\'Martian Mono\',monospace;font-size:10px;color:var(--text2);">'+(s.total||0)+' jobs \u00b7 '+(s.bleeps||0)+' bleeps</div></div>';
+  });
   el.innerHTML=html;
 }
 // HANDOVER RECEIVER
@@ -1955,7 +2155,7 @@ function rSettings(){
   var ni=document.getElementById('name-inp');if(ni)ni.value=S.userName||'';
   var bs=document.getElementById('base-ward-sel');
   if(bs){bs.innerHTML='<option value="">Not set</option>'+S.wards.map(function(w){return'<option value="'+e(w)+'"'+(S.baseWard===w?' selected':'')+'>'+e(w)+'</option>';}).join('');}
-  rWardSet();rShiftTypeSet();rTaskTypeSet();rTGrid();
+  rWardSet();rShiftTypeSet();rTaskTypeSet();rWaitingOnSet();rBleepDirSet();rTGrid();
 }
 function setName(v){S.userName=v.trim();sv();}
 function setBaseWard(v){S.baseWard=v;sv();toast(v?'Base ward: '+v:'Base ward cleared');}
@@ -1992,6 +2192,25 @@ function addShiftType(){S.shiftTypes.push({id:'st'+Date.now(),name:'',kind:'cove
 function rTaskTypeSet(){var el=document.getElementById('task-type-settings');if(!el)return;el.innerHTML=S.taskTypes.map(function(t,i){return'<div class="srow"><div class="srl">'+e(t)+'</div><span class="sdel" onclick="showConf(\'delTT_'+i+'\',\'Remove '+e(t)+'?\',\'\',\'Remove\')">\u00d7</span></div>';}).join('');}
 function addTaskType(){var inp=document.getElementById('new-tt-inp');var v=inp.value.trim();if(!v)return;if(S.taskTypes.map(function(t){return t.toLowerCase();}).indexOf(v.toLowerCase())!==-1){toast('Already exists');return;}S.taskTypes.push(v);inp.value='';sv();rTaskTypeSet();bTypeGrid();bQSTypeGrid();toast(v+' added');}
 function delTT(i){if(S.taskTypes.length<=1){toast('Cannot remove the last type');return;}S.taskTypes.splice(i,1);sv();rTaskTypeSet();}
+function rWaitingOnSet(){var el=document.getElementById('waiting-on-settings');if(!el)return;if(!S.waitingOns)S.waitingOns=DEF_WAITING_ONS.slice();el.innerHTML=S.waitingOns.map(function(w,i){return'<div class="srow"><div class="srl">'+e(w)+'</div><span class="sdel" onclick="showConf(\'delWO_'+i+'\',\'Remove '+e(w)+'?\',\'\',\'Remove\')">\u00d7</span></div>';}).join('')||'<div class="srow"><div class="srs" style="color:var(--text3);">None yet</div></div>';}
+function addWaitingOn(){var inp=document.getElementById('new-wo-inp');var v=inp.value.trim();if(!v)return;if(!S.waitingOns)S.waitingOns=[];if(S.waitingOns.map(function(t){return t.toLowerCase();}).indexOf(v.toLowerCase())!==-1){toast('Already exists');return;}S.waitingOns.push(v);inp.value='';sv();rWaitingOnSet();toast(v+' added');}
+function delWO(i){S.waitingOns.splice(i,1);sv();rWaitingOnSet();}
+function rBleepDirSet(){
+  var el=document.getElementById('bleep-dir-settings');
+  var sel=document.getElementById('new-bd-ward');
+  if(sel)sel.innerHTML='<option value="">Ward…</option>'+(S.wards||[]).map(function(w){return'<option value="'+e(w)+'">'+e(w)+'</option>';}).join('');
+  if(!el)return;
+  if(!S.bleepWards)S.bleepWards={};
+  var keys=Object.keys(S.bleepWards);
+  if(!keys.length){el.innerHTML='<div class="srow"><div class="srs" style="color:var(--text3);">Empty — tag a bleep or add one below.</div></div>';return;}
+  el.innerHTML=keys.map(function(num){
+    return'<div class="srow"><div style="font-family:\'Martian Mono\',monospace;font-size:15px;color:var(--text);min-width:54px;">'+e(num)+'</div>'
+      +'<div class="srl" style="display:flex;align-items:center;gap:6px;"><span style="width:6px;height:6px;border-radius:50%;background:#5eb88a;"></span>'+e(S.bleepWards[num])+'</div>'
+      +'<span class="sdel" onclick="delBleepDir(\''+e(num).replace(/\x27/g,'')+'\')">\u00d7</span></div>';
+  }).join('');
+}
+function addBleepDir(){var ni=document.getElementById('new-bd-num'),ws=document.getElementById('new-bd-ward');var num=ni.value.trim(),w=ws.value;if(!num){toast('Enter a number');return;}if(!w){toast('Pick a ward');return;}if(!S.bleepWards)S.bleepWards={};S.bleepWards[num]=w;ni.value='';ws.value='';sv();rBleepDirSet();toast(num+' \u2192 '+w);}
+function delBleepDir(num){if(S.bleepWards)delete S.bleepWards[num];sv();rBleepDirSet();}
 function expData(){var b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});var u=URL.createObjectURL(b);var a=document.createElement('a');var d=new Date();var st=d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');a.href=u;a.download='slate-backup-'+st+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);toast(pick(TOAST_EXPORT));}
 function impData(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev2){try{var txt=ev2.target.result.trim().replace(/^\uFEFF/,'');var d=JSON.parse(txt);if(!d||typeof d!=='object'){toast('Invalid file');return;}showConf('impDataConfirm','Replace all data?','This will overwrite everything currently saved.','Replace');window._pendingImp=d;}catch(x){toast('Import failed: '+String(x.message).slice(0,60));}};r.readAsText(f);ev.target.value='';}
 function clrData(){localStorage.removeItem('sl1');location.reload();}
@@ -2006,6 +2225,7 @@ function doConf(){
   else if(a.indexOf('delWard_')===0){var wi=parseInt(a.split('_')[1],10);delWard(wi);}
   else if(a.indexOf('delST_')===0){var si=parseInt(a.split('_')[1],10);delST(si);}
   else if(a.indexOf('delTT_')===0){var ti=parseInt(a.split('_')[1],10);delTT(ti);}
+  else if(a.indexOf('delWO_')===0){var woi=parseInt(a.split('_')[1],10);delWO(woi);}
   else if(a.indexOf('delHo_')===0){var hi=parseInt(a.split('_')[1],10);rmHoE(hi);}
 }
 
